@@ -10,8 +10,6 @@ import { functionPorcentaje, functionTotal, getDatosUsuario, getVerTienda, Limpi
 
 function puntoventa(props) {
 
-
-
     const [estable, setestable] = useState(null)
     var empresaDatos = [];
     // (async () => {

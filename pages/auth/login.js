@@ -22,7 +22,11 @@ import axios from "axios";
 import { useRouter } from 'next/router';
 import Swal from 'sweetalert2'
 import 'animate.css';
-
+const instance = axios.create({
+  httpsAgent: new https.Agent({  
+    rejectUnauthorized: false
+  })
+});
 function Login() {
   const router = useRouter()
 	React.useEffect(() => {
@@ -42,7 +46,8 @@ function Login() {
   const AuthValivation=async()=>{
     if(user.usuario !== null && user.contracena !== null){
       console.log(user)
-      const { data } = await axios.post('http://18.207.32.71:5050/v1/validarlogin',{usuario:user.usuario, contracena:user.contracena})
+
+      const { data } = await instance.post('http://18.207.32.71:5050/v1/validarlogin',{usuario:user.usuario, contracena:user.contracena})
       console.log(data)
       if(data.success){
         setDatosUsuario(data)
