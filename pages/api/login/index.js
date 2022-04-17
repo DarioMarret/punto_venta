@@ -26,8 +26,7 @@ const verificarexistencia = async (usuario, empresa) => {
     return new Promise((resolve, reject) => {
         let sql = `SELECT * FROM esq_usuario.usuario WHERE usuario = '${usuario}'`;
         pool.query(sql).then((response) => {
-            console.log(response);
-            if (!empty(response[0])) {
+            if (!empty(response.rows[0])) {
                 resolve(true)
             } else {
                 resolve(false)
@@ -40,7 +39,6 @@ const verificarexistencia = async (usuario, empresa) => {
 
 const ValidarLoginInit = async (req, res) => {
     const { usuario, contracena, status, perfil, empresa } = req.body;
-    console.log(req.body)
     if (status === 'validar') {
         try {
             let sql = `SELECT * FROM esq_usuario.usuario WHERE usuario = '${usuario}'`;
@@ -80,7 +78,7 @@ const ValidarLoginInit = async (req, res) => {
             } else {
                 let hash_clave = await bcrypt.hash(contracena, 8);
                 let sql = `INSERT INTO esq_usuario.usuario (usuario, contracena, perfil, empresa, fecha_ultimo_acceso) VALUES ('${usuario}', '${hash_clave}', '${perfil}', '${empresa}', 'NOW()')`;
-                db.query(sql).then( rep => {
+                pool.query(sql).then( rep => {
                     console.log(rep.rows);
                     res.json({
                         success: true,
@@ -99,9 +97,9 @@ const Listarusuario = async (req, res) => {
     try {
         const { empresa } = req.query
         let sql = `SELECT * FROM esq_usuario.usuario WHERE empresa = '${empresa}'`;
-        db.query(sql, { type: sequelize.QueryTypes.SELECT }).then((response) => {
-            if (!empty(response[0])) {
-                res.status(200).json({ success: true, data: response })
+        pool.query(sql).then((response) => {
+            if (!empty(response.rows[0])) {
+                res.status(200).json({ success: true, data: response.rows })
             } else {
                 res.status(200).json({ success: false })
             }
@@ -115,10 +113,10 @@ const Listarusuario = async (req, res) => {
 const ActualizarUsuario = async (req, res) => {
     try {
         const { empresa, usuario, contracena, perfil, id} = req.body
-        let contr = await VerificarContracena(contracena, id)
+        await VerificarContracena(contracena, id)
         let sql = `UPDATE esq_usuario.usuario SET usuario = '${usuario}', perfil = '${perfil}', empresa = '${empresa}' WHERE id = '${id}'`;
-        db.query(sql, { type: sequelize.QueryTypes.SELECT }).then((response) => {
-            res.status(200).json({ success: true, data: response })
+        pool.query(sql).then((response) => {
+            res.status(200).json({ success: true, data: response.rows })
         }).catch((err) => {
             res.status(200).json({ success: false, data: err })
         })
@@ -129,16 +127,16 @@ const ActualizarUsuario = async (req, res) => {
 const VerificarContracena = async(contracena, id)=>{
     return new Promise((resolve, reject) => {
         let sql = `SELECT * FROM esq_usuario.usuario WHERE id = '${id}'`;
-        db.query(sql, { type: sequelize.QueryTypes.SELECT }).then((response) => {
-            console.log("VerificarContracena:1",response);
-            if (!empty(response[0])) {
-                const x = bcrypt.compare(contracena, response[0].contracena)
+        pool.query(sql).then((response) => {
+            console.log("VerificarContracena:1",response.rows);
+            if (!empty(response.rows[0])) {
+                const x = bcrypt.compare(contracena, response.rows[0].contracena)
                 if (x) {
                     resolve("igual")
                 } else {
                     let hash_clave = bcrypt.hash(contracena, 8);
                     let sql = `UPDATE esq_usuario.usuario SET contracena = '${hash_clave}' WHERE id = '${id}'`;
-                    db.query(sql, { type: sequelize.QueryTypes.SELECT }).then((response) => {
+                    pool.query(sql, { type: sequelize.QueryTypes.SELECT }).then((response) => {
                         resolve("actualizada")  
                     })
                 }
@@ -154,8 +152,8 @@ const CambiarEstadoUsuarioInactivo = async(req, res) => {
     try {
         const { estado, id  } = req.query
         let sql = `UPDATE esq_usuario.usuario SET estado = '${estado}' WHERE id = '${id}'`;
-        db.query(sql, { type: sequelize.QueryTypes.SELECT }).then((response) => {
-            res.status(200).json({ success: true, data: response })
+        pool.query(sql).then((response) => {
+            res.status(200).json({ success: true, data: response.rows })
         }).catch((err) => {
             res.status(200).json({ success: false, data: err })
         })
