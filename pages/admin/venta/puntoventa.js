@@ -3,7 +3,7 @@ import { Button, Card, Col, Container, Row, Table, Form, Modal as ModalSpinner }
 import { Modal, Spin } from 'antd'
 import Admin from "layouts/Admin.js";
 import "assets/css/PuntoVenta.css";
-import { DOCUMENTO } from "../../../function/util/global";
+import { DOCUMENTO, host } from "../../../function/util/global";
 import moment from "moment";
 import axios from "axios";
 import { functionPorcentaje, functionTotal, getDatosUsuario, getVerTienda, LimpiarStoreDespuesDenviar, TiendaIten } from "../../../function/localstore/storeUsuario";
@@ -62,7 +62,7 @@ function puntoventa(props) {
         let fecha = moment().format("DD/MM/YYYY");
         console.log(fecha)
         await axios.post('http://localhost:8000/imprimir/tikect',{secuencial, tienda, empresa, fecha})
-        const { data } = await axios.post("/api/reporte",{tienda, empresa, secuencial, fecha})
+        const { data } = await axios.post(`${host}/v1/crear_venta`,{tienda, empresa, secuencial, fecha})
         if (data.success) {
             LimpiarStoreDespuesDenviar()
             setTabla([])
@@ -120,7 +120,7 @@ function puntoventa(props) {
         async function BuscadorHandle(event) {
             var busqueda = event.target.value;
             let empresa = getDatosUsuario().data.empresa
-            const { data } = await axios.post('/api/producto',{busqueda, empresa});
+            const { data } = await axios.post(`${host}/v1/busqueda_coinsidencia`,{busqueda, empresa});
             if (data) {
                 setresultadoSearch(data.data);
             }

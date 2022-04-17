@@ -22,6 +22,7 @@ import axios from "axios";
 import { useRouter } from 'next/router';
 import Swal from 'sweetalert2'
 import 'animate.css';
+import { host } from "../../function/util/global";
 
 function Login() {
   const router = useRouter()
@@ -42,8 +43,7 @@ function Login() {
   const AuthValivation=async()=>{
     if(user.usuario !== null && user.contracena !== null){
       console.log(user)
-      const { data } = await axios.post('/api/login',user)
-      console.log(data)
+      const { data } = await axios.post(`${host}/v1/validarlogin`,user)
       if(data.success){
         setDatosUsuario(data)
         login(data)

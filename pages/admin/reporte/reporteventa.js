@@ -22,83 +22,23 @@ import { getDatosUsuario } from '../../../function/localstore/storeUsuario';
 import moment from 'moment';
 import Modal from 'react-modal';
 import MUIDataTable from "mui-datatables";
+import { columns, ESTADO, FORMAPAGO, host } from '../../../function/util/global';
+import { TablePaging } from 'table-page-search';
 
-
-const FORMAPAGO = [
-    {
-      "E": "EFECTIVO",
-      "M": "EFECTIVO"
-    },
-    {
-      "E": "TARJETA",
-      "M": "TARJETA"
-    },
-    {
-      "E": "TRANSFERENCIA",
-      "M": "TRANSFERENCIA"
-    }
-]
-
-const ESTADO = [
-    {
-      "E": "ACTIVO",
-      "M": "ACTIVO"
-    },
-    {
-      "E": "ANULADO",
-      "M": "ANULADO"
-    }
-]
-const columns = [
-    {
-      name: "secuencia",
-      label: "SECUENCIAL",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "forma_pago",
-      label: "FORMA DE PAGO",
-      options: {
-        filter: true,
-        sort: false,
-      }
-    },
-    {
-      name: "total",
-      label: "TOTAL",
-      options: {
-        filter: true,
-        sort: false,
-      }
-    },
-    {
-      name: "fecha_creacion",
-      label: "FECHA",
-      options: {
-        filter: true,
-        sort: false,
-      }
-    },
-    {
-      name: "empresa",
-      label: "EMPRESA",
-      options: {
-        filter: true,
-        sort: false,
-      }
-    },
-    {
-      name: "estado",
-      label: "ESTADO",
-      options: {
-        filter: true,
-        sort: false,
-      }
-    },
-]
+const headerConfig = {
+  key: "id",
+  itemsPerPage: 8,
+  defaultSort: "lastName",
+  sortDescending: true,
+  columns: [
+      { fieldForSort: "secuencia", columnLabel: "SECUENCUAL", headerCellStyle:{width:80}, disableCellClick: false },
+      { fieldForSort: "forma_pago", columnLabel: "FORMA DE PAGO", disableCellClick: true },
+      { fieldForSort: "total", columnLabel: "TOTAL", disableCellClick: true },
+      { fieldForSort: "fecha_creacion", columnLabel: "FECHA", disableCellClick: true },
+      { fieldForSort: "empresa", columnLabel: "EMPRESA", disableCellClick: true },
+      { fieldForSort: "estado", columnLabel: "ESTADO", disableCellClick: false},
+  ]
+};
 const customStyles = {
     content: {
       top: '50%',
@@ -151,7 +91,7 @@ function reporteventa(props) {
     const CargarListaReporte=async()=>{
         let empresa = getDatosUsuario().data.empresa
         let fecha = moment().format('DD/MM/YYYY')
-        const { data } = await axios.get(`/api/reporte?empresa=${empresa}&fecha=${fecha}`)
+        const { data } = await axios.get(`${host}/v1/listar_reporte_venta_actual?empresa=${empresa}&fecha=${fecha}`)
         if(data.success){
             setventa(data.data)
         }
@@ -161,7 +101,8 @@ function reporteventa(props) {
         setfilterText(value);
     };
     const handleChangeEstado = async (e) => {
-        const { data } = await axios.put(`/api/reporte`,{editar, [e.target.name]:e.target.value})
+        const { data } = await axios.put(`${host}/v1/actualizar_estado`,{editar, [e.target.name]:e.target.value})
+        console.log(data)
         await CargarListaReporte()
     }
     return (
@@ -169,7 +110,7 @@ function reporteventa(props) {
             <Header />
             {/* <div style={{padding:'60px'}}/> */}
             <Card className="shadow">
-                {/* <div style={{ display: "flex" }}>
+                <div style={{ display: "flex" }}>
                     <h4 style={{ marginLeft: 20 }}>
                         Reporte Venta 
                     </h4>
@@ -179,21 +120,22 @@ function reporteventa(props) {
                         vaule={filterText}
                         onChange={(e) => handleChange(e.target.value)}
                     />
-                </div> */}
-                <MUIDataTable
+                </div>
+                {/* <MUIDataTable
                     title={"Reporte Venta"}
                     data={venta}
                     columns={columns}
                     options={options}
-                    />
-                {/* <TablePaging
+                    onRowClick={(rows)=>console.log(rows)}
+                    /> */}
+                <TablePaging
                     loading={loading}
                     dataList={venta}
                     headerConfig={headerConfig}
                     filterText={filterText}
                     onRowClick={(row)=>openModal(row)}
                     tableStyleName={removeStyling ? "" : "stripe-table"}
-                    useMaterialUiPaging={true} /> */}
+                    useMaterialUiPaging={true} /> 
             </Card>
             <Modal
                 isOpen={modalIsOpen}

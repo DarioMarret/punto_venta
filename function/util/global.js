@@ -1,26 +1,6 @@
 export const usuario_local = "usuario:";
 export const usuario_token = "token_usuario:";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const host = "https://sistemabmdigital.com:5000"
 
 
 //localinfo
@@ -34,3 +14,78 @@ export const DOCUMENTO = [
       "codigo":"00",
     }
   ]
+export const FORMAPAGO = [
+    {
+      "E": "EFECTIVO",
+      "M": "EFECTIVO"
+    },
+    {
+      "E": "TARJETA",
+      "M": "TARJETA"
+    },
+    {
+      "E": "TRANSFERENCIA",
+      "M": "TRANSFERENCIA"
+    }
+]
+
+export const ESTADO = [
+    {
+      "E": "ACTIVO",
+      "M": "ACTIVO"
+    },
+    {
+      "E": "ANULADO",
+      "M": "ANULADO"
+    }
+]
+export const columns = [
+    {
+      name: "secuencia",
+      label: "SECUENCIAL",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: "forma_pago",
+      label: "FORMA DE PAGO",
+      options: {
+        filter: true,
+        sort: false,
+      }
+    },
+    {
+      name: "total",
+      label: "TOTAL",
+      options: {
+        filter: true,
+        sort: false,
+      }
+    },
+    {
+      name: "fecha_creacion",
+      label: "FECHA",
+      options: {
+        filter: true,
+        sort: false,
+      }
+    },
+    {
+      name: "empresa",
+      label: "EMPRESA",
+      options: {
+        filter: true,
+        sort: false,
+      }
+    },
+    {
+      name: "estado",
+      label: "ESTADO",
+      options: {
+        filter: true,
+        sort: false,
+      }
+    },
+]
