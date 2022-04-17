@@ -42,8 +42,7 @@ function Login() {
   const AuthValivation=async()=>{
     if(user.usuario !== null && user.contracena !== null){
       console.log(user)
-      
-      const { data } = await axios.post('http://18.207.32.71:5050/v1/validarlogin',{usuario:user.usuario, contracena:user.contracena})
+      const { data } = await axios.post('/api/login',user)
       console.log(data)
       if(data.success){
         setDatosUsuario(data)
