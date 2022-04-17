@@ -25,5 +25,5 @@ const config = {
   database: process.env.DB_NAME,
   ssl: false
 };
-const pool = new Pool(config)
-export { pool }
+const db = new Pool(config)
+export { db }

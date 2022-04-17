@@ -26,7 +26,7 @@ async function ListarProductoConsiDencia(req, res){
         const { empresa, busqueda } = req.body;
         let coinsi = busqueda.toLowerCase()
         let sql = `SELECT id, id_categoria, producto, precio_venta, porcentaje_iva, estado FROM esq_productos.producto WHERE (producto LIKE '%${coinsi}%') AND empresa = '${empresa}' AND estado = 'A' LIMIT 10`;
-        db.query(sql).then((response)=>{
+        db .query(sql).then((response)=>{
             console.log(response.rows);
             if(!empty(response)){
                 res.json({

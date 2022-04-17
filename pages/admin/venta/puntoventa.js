@@ -62,7 +62,7 @@ function puntoventa(props) {
         let fecha = moment().format("DD/MM/YYYY");
         console.log(fecha)
         await axios.post('http://localhost:8000/imprimir/tikect',{secuencial, tienda, empresa, fecha})
-        const { data } = await axios.post("http://18.207.32.71:5050/v1/crear_venta",{tienda, empresa, secuencial, fecha})
+        const { data } = await axios.post("/api/reporte",{tienda, empresa, secuencial, fecha})
         if (data.success) {
             LimpiarStoreDespuesDenviar()
             setTabla([])
@@ -120,7 +120,7 @@ function puntoventa(props) {
         async function BuscadorHandle(event) {
             var busqueda = event.target.value;
             let empresa = getDatosUsuario().data.empresa
-            const { data } = await axios.post('http://18.207.32.71:5050/v1/busqueda_coinsidencia',{busqueda, empresa});
+            const { data } = await axios.post('/api/producto',{busqueda, empresa});
             if (data) {
                 setresultadoSearch(data.data);
             }
