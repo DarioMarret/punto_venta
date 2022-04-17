@@ -1,7 +1,6 @@
-import sequelize from 'sequelize';
-import db from '../../../db/sequelizedb'
 import empty from 'is-empty';
 import bcrypt from 'bcrypt'
+import { pool } from '../../../function/util/database';
 
 export default async (req, res) => {
 
@@ -26,7 +25,7 @@ export default async (req, res) => {
 const verificarexistencia = async (usuario, empresa) => {
     return new Promise((resolve, reject) => {
         let sql = `SELECT * FROM esq_usuario.usuario WHERE usuario = '${usuario}'`;
-        db.query(sql, { type: sequelize.QueryTypes.SELECT }).then((response) => {
+        pool.query(sql).then((response) => {
             console.log(response);
             if (!empty(response[0])) {
                 resolve(true)
@@ -41,18 +40,19 @@ const verificarexistencia = async (usuario, empresa) => {
 
 const ValidarLoginInit = async (req, res) => {
     const { usuario, contracena, status, perfil, empresa } = req.body;
+    console.log(req.body)
     if (status === 'validar') {
         try {
             let sql = `SELECT * FROM esq_usuario.usuario WHERE usuario = '${usuario}'`;
-            db.query(sql, { type: sequelize.QueryTypes.SELECT }).then((response) => {
-                console.log(response);
-                if (!empty(response[0])) {
-                    const x = bcrypt.compare(contracena, response[0].contracena)
+            pool.query(sql).then(rep => {
+                console.log("ValidarLoginInit",rep.rows[0]);
+                if (!empty(rep.rows[0])) {
+                    const x = bcrypt.compare(contracena, rep.rows[0].contracena)
                     if (x) {
                         res.json({
-                            data: response[0],
+                            data: rep.rows[0],
                             success: true,
-                            msg: 'Bienvenido ' + response[0].usuario
+                            msg: 'Bienvenido ' + rep.rows[0].usuario
                         })
                     } else {
                         res.status(401).json({
@@ -80,8 +80,8 @@ const ValidarLoginInit = async (req, res) => {
             } else {
                 let hash_clave = await bcrypt.hash(contracena, 8);
                 let sql = `INSERT INTO esq_usuario.usuario (usuario, contracena, perfil, empresa, fecha_ultimo_acceso) VALUES ('${usuario}', '${hash_clave}', '${perfil}', '${empresa}', 'NOW()')`;
-                db.query(sql, { type: sequelize.QueryTypes.SELECT }).then((response) => {
-                    console.log(response);
+                db.query(sql).then( rep => {
+                    console.log(rep.rows);
                     res.json({
                         success: true,
                         msg: 'Nuevo Usuario registrado en la empresa: ' + empresa,

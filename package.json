@@ -51,6 +51,8 @@
     "node-sass-package-importer": "5.3.2",
     "nouislider": "14.6.3",
     "path": "0.12.7",
+    "pg": "^8.7.3",
+    "pg-pool": "^3.5.1",
     "react": "17.0.1",
     "react-bootstrap": "^2.2.3",
     "react-chartjs-2": "2.11.1",
