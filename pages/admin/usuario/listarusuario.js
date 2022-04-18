@@ -17,8 +17,8 @@ import {
 import Admin from "layouts/Admin.js";  
 import Header from "components/Headers/Header.js";
 import axios from 'axios'
-import TextField from "@material-ui/core/TextField"
-import { TablePaging } from 'table-page-search';
+// import TextField from "@material-ui/core/TextField"
+// import { TablePaging } from 'table-page-search';
 
 
 const headerConfig = {
@@ -78,20 +78,20 @@ function listarusuario(props) {
                     <h4 style={{marginLeft: 20}}>
                         Table with Paging and Search
                     </h4>
-                    <TextField
+                    {/* <TextField
                         label="Search"
                         style={{marginLeft: 40}}
                         vaule={filterText}
                         onChange={(e) => handleChange(e.target.value)}
-                    />
+                    /> */}
                 </div>
-          <TablePaging  
+          {/* <TablePaging  
           loading={loading}
           dataList={users}
           headerConfig={headerConfig}
           filterText={filterText}
           tableStyleName={removeStyling ? "" : "stripe-table"}
-          useMaterialUiPaging={true} />
+          useMaterialUiPaging={true} /> */}
           </Card>
         </>
     );

@@ -1,3 +1,6 @@
+if (typeof document === 'undefined') { 
+  // @ts-ignore global.document = { querySelector: function () {}, }; }
+}
 import React, { useState, useEffect, useMemo } from "react";
 import ReactDOM from "react-dom";
 import Head from "next/head";
@@ -76,7 +79,7 @@ export default function MyApp({ Component, pageProps }) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <title>Plantilla</title>
-        <script src="https://maps.googleapis.com/maps/api/js"></script>
+        {/* <script src="https://maps.googleapis.com/maps/api/js"></script> */}
       </Head>
       {
         auth != null ? 

@@ -6,7 +6,7 @@ import "assets/css/PuntoVenta.css";
 import { DOCUMENTO, host } from "../../../function/util/global";
 import moment from "moment";
 import axios from "axios";
-import { functionPorcentaje, functionTotal, getDatosUsuario, getVerTienda, LimpiarStoreDespuesDenviar, TiendaIten } from "../../../function/localstore/storeUsuario";
+import { functionPorcentaje, functionTotal, getDatosUsuario, getVerTienda, LimpiarAcumuladorById, LimpiarStoreDespuesDenviar, TiendaIten } from "../../../function/localstore/storeUsuario";
 
 function puntoventa(props) {
 
@@ -141,16 +141,7 @@ function puntoventa(props) {
         async function LimpiarById(itens) {
             let id = itens.id
             setTabla(await LimpiarAcumuladorById(id, itens))
-            setTotalesFacturacion({
-                Ice: TotalImpuestoICE().toFixed(2),
-                subTotal_12: TotalTarifa12().toFixed(2),
-                subTotal_0: TotalTarifa0().toFixed(2),
-                subTotal_iva: TotalImpuestoIVA().toFixed(2),
-                Descuento: DescuentosTotal().toFixed(2),
-                Total_irbpnr: TotalImpuestoIRBPNR().toFixed(2),
-                Total_sin_impuesto: ImporteTotal().toFixed(2),
-                Total: (TotalImpuestos() + ImporteTotal()).toFixed(2),
-            })
+            setTotalesFacturacion( { subTotal_12: functionPorcentaje(), Total: functionTotal() })
         }
         async function Agregar(id,id_categoria,producto,precio_venta) {
             let cantidad = 1

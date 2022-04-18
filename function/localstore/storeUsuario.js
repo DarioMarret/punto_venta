@@ -69,6 +69,16 @@ async function VerTienda() {
         console.log(error)
     }
 }
+export async function LimpiarAcumuladorById(id){
+    let iten = JSON.parse(localStorage.getItem('tienda:'));
+    if(iten !== null) {
+        let Cost = []
+        Cost = iten.filter(tienda=> tienda.id !== id)
+        localStorage.setItem('tienda:',JSON.stringify(Cost));
+        return getVerTienda()
+
+    }
+}
 export function functionPorcentaje(){
     // try {
     //     let iten = localStorage.getItem('tienda:')
