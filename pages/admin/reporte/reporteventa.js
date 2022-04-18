@@ -17,7 +17,7 @@ import {
 import Admin from "layouts/Admin.js";
 import Header from "components/Headers/Header.js";
 import axios from 'axios'
-// import TextField from "@material-ui/core/TextField"
+import TextField from "@material-ui/core/TextField"
 import { getDatosUsuario } from '../../../function/localstore/storeUsuario';
 import moment from 'moment';
 import Modal from 'react-modal';
@@ -114,12 +114,13 @@ function reporteventa(props) {
                     <h4 style={{ marginLeft: 20 }}>
                         Reporte Venta 
                     </h4>
-                    {/* <TextField
+                    <TextField
                         label="Buscador"
                         style={{ marginLeft: 40 }}
                         vaule={filterText}
                         onChange={(e) => handleChange(e.target.value)}
-                    /> */}
+                    />
+                    
                 </div>
                 {/* <MUIDataTable
                     title={"Reporte Venta"}
