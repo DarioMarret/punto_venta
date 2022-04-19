@@ -24,6 +24,12 @@ var routes = [
     layout: "/admin",
   },
   {
+    path: "/caja/caja",
+    name: "Cuadrar Caja",
+    icon: "ni ni-circle-08 text-blue",
+    layout: "/admin",
+  },
+  {
     path: "/usuario/listarusuario",
     name: "Usuario",
     icon: "ni ni-circle-08 text-blue",

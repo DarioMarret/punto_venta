@@ -160,7 +160,7 @@ function reporteventa(props) {
                         FORMAPAGO.map((iten,index)=>(
                             editar.forma_pago == iten.E ?
                             <option key={index} value={iten.M} selectd >{iten.E}</option>  
-                            : <option key={index} value={iten.M} selectd >{iten.E}</option>
+                            : <option key={index} value={iten.M}  >{iten.E}</option>
                         ))
                     }
                 </select>
@@ -168,8 +168,8 @@ function reporteventa(props) {
                     {
                         ESTADO.map((iten,index)=>(
                             editar.estado == iten.E ?
-                            <option key={index} value={iten.M} selected >{iten.E}</option>  
-                            : <option key={index} value={iten.M} selected >{iten.E}</option>
+                            <option key={index} value={iten.M} selected>{iten.E}</option>  
+                            : <option key={index} value={iten.M} >{iten.E}</option>
                         ))
                     }
                 </select>
