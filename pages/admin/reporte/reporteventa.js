@@ -17,13 +17,13 @@ import {
 import Admin from "layouts/Admin.js";
 import Header from "components/Headers/Header.js";
 import axios from 'axios'
-import TextField from "@material-ui/core/TextField"
+// import TextField from "@material-ui/core/TextField"
 import { getDatosUsuario } from '../../../function/localstore/storeUsuario';
 import moment from 'moment';
 import Modal from 'react-modal';
 // import MUIDataTable from "mui-datatables";
 import { columns, ESTADO, FORMAPAGO, host } from '../../../function/util/global';
-import { TablePaging } from 'table-page-search';
+// import { TablePaging } from 'table-page-search';
 
 const headerConfig = {
   key: "id",
@@ -114,12 +114,12 @@ function reporteventa(props) {
                     <h4 style={{ marginLeft: 20 }}>
                         Reporte Venta 
                     </h4>
-                    <TextField
+                    {/* <TextField
                         label="Buscador"
                         style={{ marginLeft: 40 }}
                         vaule={filterText}
                         onChange={(e) => handleChange(e.target.value)}
-                    />
+                    /> */}
                     
                 </div>
                 {/* <MUIDataTable
@@ -129,14 +129,14 @@ function reporteventa(props) {
                     options={options}
                     onRowClick={(rows)=>console.log(rows)}
                     /> */}
-                <TablePaging
+                {/* <TablePaging
                     loading={loading}
                     dataList={venta}
                     headerConfig={headerConfig}
                     filterText={filterText}
                     onRowClick={(row)=>openModal(row)}
                     tableStyleName={removeStyling ? "" : "stripe-table"}
-                    useMaterialUiPaging={true} /> 
+                    useMaterialUiPaging={true} />  */}
             </Card>
             <Modal
                 isOpen={modalIsOpen}
