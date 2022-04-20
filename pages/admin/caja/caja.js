@@ -12,7 +12,6 @@ import Admin from "layouts/Admin.js";
 import { host } from '../../../function/util/global';
 
 function caja(props) {
-    const [empresa, setempresa] = useState(null)
     const [ModalIngreso, setModalIngreso] = useState(false)
     const [ModalRetiro, setModalRetiro] = useState(false)
     const [ModalCuadre, setModalCuadre] = useState(false)
@@ -31,10 +30,12 @@ function caja(props) {
     })
     const [Select, setSelect] = useState(null);
     const [ActualizarC, setActualizarC] = useState(false)   
+    const [listM, setlistM] = useState(null);
 
     useEffect(() => {
         (async()=>{
             await ListarTotalCaja()
+            await ListarMovimientos()
         })()
     }, [])
     async function ListarTotalCaja(){
@@ -48,6 +49,21 @@ function caja(props) {
                 setefectivo(data.data[0].cuadre_total)
             }else{
                 setefectivo(0)
+            }
+        } catch (error) {
+            console.log("ListarTotalcaja", error)
+        }
+    }
+    async function ListarMovimientos(){
+        try {
+            let empresa = getDatosUsuario().data.empresa
+            const { data } = await axios.get(`${host}/v1/listar_movimiento?empresa=${empresa}&estado=${estado}`)
+            // const { data } = await axios.get(`http://localhost:5000/v1/listar_movimiento?empresa=${empresa}&estado=${estado}`)
+            console.log(data);
+            if(data.success){
+                setlistM(data.data)
+            }else{
+                setlistM(null)
             }
         } catch (error) {
             console.log("ListarTotalcaja", error)
@@ -226,19 +242,19 @@ function caja(props) {
                                     <th>DETALLE</th>
                                     <th>INGRESO</th>
                                     <th>SALIDA</th>
-                                    <th>ACCION</th>
+                                    {/* <th>ACCION</th> */}
                                 </tr>
                             </thead>
                             <tbody>
                             {
-                                ListaIngreso ?
-                                ListaIngreso.map((iten,index) =>(
+                                listM ?
+                                listM.map((iten,index) =>(
                                     <tr key={index}>
                                         <td>{iten.fecha}</td>
                                         <td>{iten.detalle}</td>
-                                        <td>I: ${iten.ingreso}</td>
-                                        <td>S: ${iten.salida}</td>
-                                        <td> <button className={iten.estado === "ACTIVO" ? "btn btn-default" : "btn btn-danger"} onClick={()=>CambiarEstado(iten.id, iten.estado, "Ingreso")}> Anular </button> </td>
+                                        <td>${iten.ingreso}</td>
+                                        <td>${iten.salida}</td>
+                                        {/* <td> <button className={iten.estado === "ACTIVO" ? "btn btn-default" : "btn btn-danger"} onClick={()=>CambiarEstado(iten.id, iten.estado)}> Anular </button> </td> */}
                                     </tr>
                                 )):''
                             }

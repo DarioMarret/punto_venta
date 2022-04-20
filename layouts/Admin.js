@@ -40,9 +40,9 @@ function Admin(props) {
       <div className="main-content" ref={mainContentRef}>
         <AdminNavbar {...props} brandText={getBrandText()} />
         {props.children}
-        <Container fluid>
+        {/* <Container fluid>
           <AdminFooter />
-        </Container>
+        </Container> */}
       </div>
     </>
   );
