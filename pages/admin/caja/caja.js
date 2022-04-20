@@ -57,7 +57,7 @@ function caja(props) {
     async function ListarMovimientos(){
         try {
             let empresa = getDatosUsuario().data.empresa
-            const { data } = await axios.get(`${host}/v1/listar_movimiento?empresa=${empresa}&estado=${estado}`)
+            const { data } = await axios.get(`${host}/v1/listar_movimiento?empresa=${empresa}&estado=ACTIVO`)
             // const { data } = await axios.get(`http://localhost:5000/v1/listar_movimiento?empresa=${empresa}&estado=${estado}`)
             console.log(data);
             if(data.success){
