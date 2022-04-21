@@ -87,6 +87,12 @@ function caja(props) {
     }
     async function RegistrarMovimiento(){
         if(movimiento.detalle !==null && movimiento.ingreso > 0 || movimiento.salida > 0 ){
+            if(Select == "I"){
+                movimiento.salida = 0
+            }
+            if(Select == "S"){
+                movimiento.ingreso = 0
+            }
             const { data } = await axios.post(`${host}/v1/ingresar_movimiento`,movimiento)
             if(data.success){
                 setModalIngreso(false)
