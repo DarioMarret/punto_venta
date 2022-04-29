@@ -13,32 +13,18 @@ import {
     Row,
     Col,
 } from "reactstrap";
-// layout for this page
 import Admin from "layouts/Admin.js";
 import Header from "components/Headers/Header.js";
 import axios from 'axios'
-// import TextField from "@material-ui/core/TextField"
 import { getDatosUsuario } from '../../../function/localstore/storeUsuario';
 import moment from 'moment';
 import Modal from 'react-modal';
-// import MUIDataTable from "mui-datatables";
 import { columns, ESTADO, FORMAPAGO, host } from '../../../function/util/global';
-// import { TablePaging } from 'table-page-search';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-next-table/dist/SmartTable.css';
+import TableFilter from '../../../components/Table/TableFilter';
 
-const headerConfig = {
-  key: "id",
-  itemsPerPage: 8,
-  defaultSort: "lastName",
-  sortDescending: true,
-  columns: [
-      { fieldForSort: "secuencia", columnLabel: "SECUENCUAL", headerCellStyle:{width:80}, disableCellClick: false },
-      { fieldForSort: "forma_pago", columnLabel: "FORMA DE PAGO", disableCellClick: true },
-      { fieldForSort: "total", columnLabel: "TOTAL", disableCellClick: true },
-      { fieldForSort: "fecha_creacion", columnLabel: "FECHA", disableCellClick: true },
-      { fieldForSort: "empresa", columnLabel: "EMPRESA", disableCellClick: true },
-      { fieldForSort: "estado", columnLabel: "ESTADO", disableCellClick: false},
-  ]
-};
+
 const customStyles = {
     content: {
       top: '50%',
@@ -93,50 +79,44 @@ function reporteventa(props) {
         let fecha = moment().format('DD/MM/YYYY')
         const { data } = await axios.get(`${host}/v1/listar_reporte_venta_actual?empresa=${empresa}&fecha=${fecha}`)
         if(data.success){
+            console.log(data.data)
             setventa(data.data)
         }
     }
-    const handleChange = (value) => {
-        console.log(value);
-        setfilterText(value);
-    };
+
     const handleChangeEstado = async (e) => {
         const { data } = await axios.put(`${host}/v1/actualizar_estado`,{editar, [e.target.name]:e.target.value})
         console.log(data)
         await CargarListaReporte()
     }
+
+    const ClickRowsCelda = (row) =>{
+        openModal(row)
+    } 
+
+    const headCells = [
+        { id: "secuencia", label: "SECUENCIAL", numeric: false, width: 200, click: true},
+        { id: "forma_pago", label: "FORMA DE PAGO", numeric: false, width: 200},
+        { id: "total", label: "TOTAL", numeric: false, width: 200},
+        { id: "fecha_creacion", label: "FECHA", numeric: false, width: 200},
+        { id: "empresa", label: "EMPRESA", numeric: false, width: 200},
+        { id: "estado", label: "ESTADO", numeric: false, width: 200},
+    ]
     return (
         <>
             <Header />
-            {/* <div style={{padding:'60px'}}/> */}
             <Card className="shadow">
                 <div style={{ display: "flex" }}>
                     <h4 style={{ marginLeft: 20 }}>
                         Reporte Venta 
                     </h4>
-                    {/* <TextField
-                        label="Buscador"
-                        style={{ marginLeft: 40 }}
-                        vaule={filterText}
-                        onChange={(e) => handleChange(e.target.value)}
-                    /> */}
-                    
                 </div>
-                {/* <MUIDataTable
-                    title={"Reporte Venta"}
-                    data={venta}
-                    columns={columns}
-                    options={options}
-                    onRowClick={(rows)=>console.log(rows)}
-                    /> */}
-                {/* <TablePaging
-                    loading={loading}
-                    dataList={venta}
-                    headerConfig={headerConfig}
-                    filterText={filterText}
-                    onRowClick={(row)=>openModal(row)}
-                    tableStyleName={removeStyling ? "" : "stripe-table"}
-                    useMaterialUiPaging={true} />  */}
+               <TableFilter
+                headerTitle={headCells}
+                data={venta}
+                rowFila={10}
+                onRowClick={(rows)=>ClickRowsCelda(rows)}
+               />
             </Card>
             <Modal
                 isOpen={modalIsOpen}
