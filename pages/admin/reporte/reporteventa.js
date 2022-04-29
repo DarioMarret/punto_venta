@@ -79,7 +79,7 @@ function reporteventa(props) {
         let fecha = moment().format('DD/MM/YYYY')
         const { data } = await axios.get(`${host}/v1/listar_reporte_venta_actual?empresa=${empresa}&fecha=${fecha}`)
         if(data.success){
-            console.log(data.data)
+            // console.log(data.data)
             setventa(data.data)
         }
     }
@@ -138,9 +138,9 @@ function reporteventa(props) {
                 <select name="forma_pago" id="" className="form-control" onChange={(e) =>handleChangeEstado(e)}>
                     {
                         FORMAPAGO.map((iten,index)=>(
-                            editar.forma_pago == iten.E ?
-                            <option key={index} value={iten.M} selectd >{iten.E}</option>  
-                            : <option key={index} value={iten.M}  >{iten.E}</option>
+                            editar.forma_pago == iten.E 
+                            ? <option key={index} value={iten.E} selectd >{iten.E}</option>  
+                            : <option key={index} value={iten.E}  >{iten.E}</option>
                         ))
                     }
                 </select>

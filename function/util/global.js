@@ -17,15 +17,12 @@ export const DOCUMENTO = [
 export const FORMAPAGO = [
     {
       "E": "EFECTIVO",
-      "M": "EFECTIVO"
     },
     {
       "E": "TARJETA",
-      "M": "TARJETA"
     },
     {
       "E": "TRANSFERENCIA",
-      "M": "TRANSFERENCIA"
     }
 ]
 

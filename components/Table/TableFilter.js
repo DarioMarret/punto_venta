@@ -77,9 +77,11 @@ function TableFilter(props) {
                     }
                 </tbody>
             </table>
-            <button className="btn btn-primary" onClick={ prevPage }> {"<"} </button>
+            <div className="d-flex justify-content-end m-3">
+            <button className="btn btn-primary btn-md" onClick={ prevPage }> {"<"} </button>
             &nbsp;
-            <button className="btn btn-primary" onClick={ nextPage }> {">"} </button>
+            <button className="btn btn-primary btn-md" onClick={ nextPage }> {">"} </button>
+            </div>
         </>
     );
 }
