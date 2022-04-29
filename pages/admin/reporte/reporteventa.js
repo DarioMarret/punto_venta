@@ -44,14 +44,7 @@ function reporteventa(props) {
     const [filterText, setfilterText] = useState(false);
     const [modalIsOpen, setIsOpen] = useState(false)
     const [removeStyling, setremoveStyling] = useState(true);
-    const [editar, seteditar] = useState({
-        secuencia: null,
-        forma_pago: null,
-        total: null,
-        fecha_creacion: null,
-        estado: null,
-        empresa: null,
-    });
+    const [editar, seteditar] = useState(null);
     const [venta, setventa] = useState([]);
 
     function openModal(row) {
@@ -86,7 +79,7 @@ function reporteventa(props) {
 
     const handleChangeEstado = async (e) => {
         const { data } = await axios.put(`${host}/v1/actualizar_estado`,{editar, [e.target.name]:e.target.value})
-        console.log(data)
+        // console.log(data)
         await CargarListaReporte()
     }
 
@@ -130,27 +123,34 @@ function reporteventa(props) {
                     fontWeight: "bold",
                 }}
                 >
-                Secuencia:{editar.secuencia}<br></br> 
-                Total: ${editar.total} <br></br>
-                Forma de Pago: {editar.forma_pago} <br></br>
-                Estado: {editar.estado}</p>
+                Secuencia:{editar ? editar.secuencia: ''}<br></br> 
+                Total: ${editar ? editar.total: ''} <br></br>
+                Forma de Pago: {editar ? editar.forma_pago: ''} <br></br>
+                Estado: {editar ? editar.estado: ''}</p>
 
                 <select name="forma_pago" id="" className="form-control" onChange={(e) =>handleChangeEstado(e)}>
                     {
+                        editar 
+                        ?
                         FORMAPAGO.map((iten,index)=>(
                             editar.forma_pago == iten.E 
-                            ? <option key={index} value={iten.E} selectd >{iten.E}</option>  
+                            ? <option key={index} value={iten.E} selected={true} >{iten.E}</option>  
                             : <option key={index} value={iten.E}  >{iten.E}</option>
                         ))
+                        : ''
                     }
                 </select>
+                &nbsp;
                 <select name="estado" id="" className="form-control" onChange={(e) =>handleChangeEstado(e)}>
                     {
+                        editar 
+                        ?
                         ESTADO.map((iten,index)=>(
-                            editar.estado == iten.E ?
-                            <option key={index} value={iten.M} selected>{iten.E}</option>  
-                            : <option key={index} value={iten.M} >{iten.E}</option>
+                            editar != null && editar.estado == iten.E 
+                            ? <option key={index} value={iten.E} selected>{iten.E}</option>  
+                            : <option key={index} value={iten.E} >{iten.E}</option>
                         ))
+                        : ''
                     }
                 </select>
             </Modal> 
