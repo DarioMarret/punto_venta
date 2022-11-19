@@ -1,6 +1,6 @@
 export const usuario_local = "usuario:";
 export const usuario_token = "token_usuario:";
-export const host = "https://sistemabmdigital.com/punto_venta"
+export const host = "http://54.161.41.50:3000"
 
 
 //localinfo
