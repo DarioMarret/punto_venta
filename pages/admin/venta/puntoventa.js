@@ -402,7 +402,7 @@ function puntoventa(props) {
                                                     value={dataCliente.nombre} onChange={(e)=>setdataCliente({...dataCliente, nombre: e.target.value})}></Form.Control>
                                                 </Form.Group>
                                             </Col>
-                                            <Col md={3}>
+                                            {/* <Col md={3}>
                                                 <Form.Group>
                                                     <label>Fecha nacimiento</label>
                                                     <Form.Control className="text-center" type="date" name="fecha_nacimiento" 
@@ -417,8 +417,8 @@ function puntoventa(props) {
                                                     value={dataCliente.edad} 
                                                     onChange={(e)=>setdataCliente({...dataCliente, edad: e.target.value})}></Form.Control>
                                                 </Form.Group>
-                                            </Col>
-                                            <Col md={3}>
+                                            </Col> */}
+                                            {/* <Col md={3}>
                                                 <Form.Group>
                                                     <label>Sexo</label>
                                                     <select
@@ -430,8 +430,8 @@ function puntoventa(props) {
                                                         <option>Femenino</option>
                                                     </select>
                                                 </Form.Group>
-                                            </Col>
-                                            <Col md={3}>
+                                            </Col> */}
+                                            {/* <Col md={3}>
                                                 <Form.Group>
                                                     <label>Discapacidad</label>
                                                     <select
@@ -443,7 +443,7 @@ function puntoventa(props) {
                                                         <option>SI</option>
                                                     </select>
                                                 </Form.Group>
-                                            </Col>
+                                            </Col> */}
                                             <Col md={4}>
                                                 <Form.Group>
                                                     <label>Telefono</label>
