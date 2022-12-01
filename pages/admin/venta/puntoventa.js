@@ -217,11 +217,7 @@ function puntoventa(props) {
         }
 
         async function RegistrarContinual(){
-            if(!isEmpty(dataCliente.cedula) && !isEmpty(dataCliente.nombre)  && 
-            !isEmpty(dataCliente.direccion) && !isEmpty(dataCliente.telefono) && 
-            !isEmpty(dataCliente.email) && !isEmpty(dataCliente.fecha_nacimiento) && 
-            !isEmpty(dataCliente.sexo) && !isEmpty(dataCliente.discapacidad) && 
-            !isEmpty(dataCliente.edad) ){
+            if(!isEmpty(dataCliente.cedula) && !isEmpty(dataCliente.nombre) && !isEmpty(dataCliente.direccion) && !isEmpty(dataCliente.telefono) && !isEmpty(dataCliente.email) ){
                 try {
                     const { data } = await axios.post("https://codigomarret.online/facturacion/cedula",{
                         "razon_social": dataCliente.nombre,
