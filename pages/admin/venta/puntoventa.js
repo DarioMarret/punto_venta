@@ -210,15 +210,11 @@ function puntoventa(props) {
         }
 
         async function RegistrarContinual(){
-            // if(!isEmpty(dataCliente.cedula) && !isEmpty(dataCliente.nombre) && !isEmpty(dataCliente.direccion) && !isEmpty(dataCliente.telefono) && !isEmpty(dataCliente.email) ){
+            if(!isEmpty(dataCliente.cedula) && !isEmpty(dataCliente.nombre) && !isEmpty(dataCliente.direccion) && !isEmpty(dataCliente.telefono) && !isEmpty(dataCliente.email) ){
                 try {
                     const { data } = await axios.post("https://codigomarret.online/facturacion/cedula",{
                         "razon_social": dataCliente.nombre,
                         "nombre": dataCliente.nombre,
-                        "fecha_nacimiento": dataCliente.fecha_nacimiento,
-                        "edad": dataCliente.edad,
-                        "sexo": dataCliente.sexo,
-                        "discapacidad": dataCliente.discapacidad,
                         "email": dataCliente.email,
                         "direccion": dataCliente.direccion,
                         "telefono": dataCliente.telefono,
@@ -231,10 +227,6 @@ function puntoventa(props) {
                         const { data } = await axios.put("https://codigomarret.online/facturacion/cedula_refrescar",{
                             "razon_social": dataCliente.nombre,
                             "nombre": dataCliente.nombre,
-                            "fecha_nacimiento": dataCliente.fecha_nacimiento,
-                            "edad": dataCliente.edad,
-                            "sexo": dataCliente.sexo,
-                            "discapacidad": dataCliente.discapacidad,
                             "email": dataCliente.email,
                             "direccion": dataCliente.direccion,
                             "telefono": dataCliente.telefono,
@@ -248,10 +240,9 @@ function puntoventa(props) {
                 } catch (error) {
                     setMessage("Error por favor vuelva a intentar")
                 }
-
-            // }else{
-            //     setMessage("Por favor complete los campos")
-            // }
+            }else{
+                setMessage("Por favor complete los campos")
+            }
         }
 
         return (
