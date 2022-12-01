@@ -73,7 +73,8 @@ function puntoventa(props) {
     async function EnviarFactura() {
        
         let tienda = getVerTienda()
-        if(tienda.length > 0){
+        console.log(tienda)
+        if(typeof tienda == 'object' ){
             let empresa = getDatosUsuario().data.empresa
             let {numero_secuencial} = await datosEmpresa()
             let secuencial = numero_secuencial
