@@ -239,7 +239,7 @@ function puntoventa(props) {
                         setMessage("La cedula ya se encuentra registrada")
                         setModalRegistro(!modalregistro)
                         setModalFormapago(!modalformaPago)
-                        const { data } = await axios.post("https://codigomarret.online/facturacion/cedula_refrescar",{
+                        const { data } = await axios.put("https://codigomarret.online/facturacion/cedula_refrescar",{
                             "razon_social": dataCliente.nombre,
                             "nombre": dataCliente.nombre,
                             "fecha_nacimiento": dataCliente.fecha_nacimiento,
