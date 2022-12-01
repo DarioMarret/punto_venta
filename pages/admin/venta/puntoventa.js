@@ -42,7 +42,7 @@ function puntoventa(props) {
         razon_social: "",
         fecha_nacimiento: "",
         edad: "",
-        sexo:"",
+        sexo:"Masculino",
         discapacidad: "NO",
         email: "",
         direccion:"",
