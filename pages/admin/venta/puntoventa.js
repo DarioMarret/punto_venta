@@ -95,7 +95,7 @@ function puntoventa(props) {
                 limpiar()
             }
         }else{
-            setmensage("No hay productos en la factura")
+            setMessage("No hay productos en la factura")
             setShow(true)
         }
     }
