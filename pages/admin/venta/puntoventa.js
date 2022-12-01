@@ -77,25 +77,30 @@ function puntoventa(props) {
     async function EnviarFactura() {
        
         let tienda = getVerTienda()
-        let empresa = getDatosUsuario().data.empresa
-        let {numero_secuencial} = await datosEmpresa()
-        let secuencial = numero_secuencial
-        setcargando(true)
-        let fecha = moment().format("DD/MM/YYYY");
-        await JsonStructura(tienda, TotalesFacturacion, dataCliente)
-        await axios.post('http://localhost:8000/imprimir/tikect',{secuencial, tienda, empresa, fecha})
-        const { data } = await axios.post(`${host}/v1/crear_venta`,{tienda, empresa, secuencial, fecha})
-        if (data.success) {
-            LimpiarStoreDespuesDenviar()
-            setTabla([])
-            setcargando(false)
-            setTotalesFacturacion({
-                subTotal_12: functionSubtotal(),
-                Total: functionTotal(),
-                iva: functionPorcentajeIva(),
-            })
-            setModalFormapago(false)
-            limpiar()
+        if(tienda.length > 0){
+            let empresa = getDatosUsuario().data.empresa
+            let {numero_secuencial} = await datosEmpresa()
+            let secuencial = numero_secuencial
+            setcargando(true)
+            let fecha = moment().format("DD/MM/YYYY");
+            await JsonStructura(tienda, TotalesFacturacion, dataCliente)
+            await axios.post('http://localhost:8000/imprimir/tikect',{secuencial, tienda, empresa, fecha})
+            const { data } = await axios.post(`${host}/v1/crear_venta`,{tienda, empresa, secuencial, fecha})
+            if (data.success) {
+                LimpiarStoreDespuesDenviar()
+                setTabla([])
+                setcargando(false)
+                setTotalesFacturacion({
+                    subTotal_12: functionSubtotal(),
+                    Total: functionTotal(),
+                    iva: functionPorcentajeIva(),
+                })
+                setModalFormapago(false)
+                limpiar()
+            }
+        }else{
+            setmensage("No hay productos en la factura")
+            setShow(true)
         }
     }
     
@@ -497,6 +502,12 @@ function puntoventa(props) {
                                         </Row>
                                     </Form>
                                     <br />
+                                    <p
+                                        style={{
+                                            color:"red",
+                                            fontSize:17
+                                        }}
+                                    >{message}</p>
                                     <div className="d-flex justify-content-between">
                                         <Button variant="default" onClick={() => setModalFormapago(!modalformaPago)}> Cerrar </Button>
                                         <Button variant="default" onClick={() => EnviarFactura()}> PAGAR </Button>
