@@ -248,6 +248,8 @@ function puntoventa(props) {
                     setMessage("Error por favor vuelva a intentar")
                 }
 
+            }else{
+                setMessage("Por favor complete los campos")
             }
         }
 
@@ -369,7 +371,10 @@ function puntoventa(props) {
                                                 <Form.Group>
                                                     <label>Cedula / Ruc</label>
                                                     <Form.Control type="text" name="cedula" value={dataCliente.cedula}
-                                                     onChange={(event) => ValidarRuc(event.target.value)}
+                                                     onChange={(event) =>{
+                                                        ValidarRuc(event.target.value),
+                                                        setMessage('')
+                                                     }}
                                                     ></Form.Control>
                                                 </Form.Group>
                                             </Col>
