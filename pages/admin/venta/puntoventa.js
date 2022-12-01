@@ -40,10 +40,6 @@ function puntoventa(props) {
     const [dataCliente, setdataCliente] = useState({
         nombre: "",
         razon_social: "",
-        fecha_nacimiento: "",
-        edad: "",
-        sexo:"Masculino",
-        discapacidad: "NO",
         email: "",
         direccion:"",
         telefono:"",
@@ -128,14 +124,30 @@ function puntoventa(props) {
                 const {data , status} = await axios.get("https://codigomarret.online/facturacion/cedula/"+e)
                 console.log(data)
                 if (data.success) {
-                    setdataCliente(data.data);
+                    setdataCliente({
+                        ...dataCliente,
+                        nombre: data.data.nombre,
+                        razon_social: data.data.nombre,
+                        email: data.data.email,
+                        direccion: data.data.direccion,
+                        telefono: data.data.telefono,
+                        cedula: data.data.cedula
+                    })
                 }else{
                     setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
                 }
             } else if (cedula.length == 13 && cedula.indexOf("001", 10)) {
                 const {data , status} = await axios.get("https://codigomarret.online/facturacion/cedula/"+e)
                 if (data.success) {
-                    setdataCliente(data.data);
+                    setdataCliente({
+                        ...dataCliente,
+                        nombre: data.data.nombre,
+                        razon_social: data.data.nombre,
+                        email: data.data.email,
+                        direccion: data.data.direccion,
+                        telefono: data.data.telefono,
+                        cedula: data.data.cedula
+                    })
                 }else{
                     setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
                 }
@@ -160,64 +172,77 @@ function puntoventa(props) {
         })
     }
 
-        async function BuscadorHandle(event) {
-            var busqueda = event.target.value;
-            let empresa = getDatosUsuario().data.empresa
-            const { data } = await axios.post(`${host}/v1/busqueda_coinsidencia`,{busqueda, empresa});
-            if (data) {
-                setresultadoSearch(data.data);
-            }
+    async function BuscadorHandle(event) {
+        var busqueda = event.target.value;
+        let empresa = getDatosUsuario().data.empresa
+        const { data } = await axios.post(`${host}/v1/busqueda_coinsidencia`,{busqueda, empresa});
+        if (data) {
+            setresultadoSearch(data.data);
         }
-        async function RestarSumar(itens, options) {
-            if (options == 'restar' && itens.cantidad == 1) {
-                Modal.info({
-                    title: 'SYSTEMABM',
-                    content: 'Cantidad es ' + itens.cantidad + ' minimo requerido'
-                })
-            } else {
-                itens["cantidad"] = 1
-                setTabla(await TiendaIten(itens, options))
-                setTotalesFacturacion( { subTotal_12: functionSubtotal(), Total: functionTotal(), iva: functionPorcentajeIva() })
-            }
-
-        }
-        async function LimpiarById(itens) {
-            let id = itens.id
-            setTabla(await LimpiarAcumuladorById(id, itens))
+    }
+    async function RestarSumar(itens, options) {
+        if (options == 'restar' && itens.cantidad == 1) {
+            Modal.info({
+                title: 'SYSTEMABM',
+                content: 'Cantidad es ' + itens.cantidad + ' minimo requerido'
+            })
+        } else {
+            itens["cantidad"] = 1
+            setTabla(await TiendaIten(itens, options))
             setTotalesFacturacion( { subTotal_12: functionSubtotal(), Total: functionTotal(), iva: functionPorcentajeIva() })
         }
-        async function Agregar(id,id_categoria,producto,precio_venta) {
-            let cantidad = 1
-            let iva = parseFloat(precio_venta) - (parseFloat(precio_venta)/1.12)
-            let subtota = parseFloat(precio_venta)/1.12
-            setTabla(await TiendaIten({id,id_categoria,producto,precio_venta,cantidad, iva, subtota}, "sumar"))
-            setTotalesFacturacion( { subTotal_12: functionSubtotal(), Total: functionTotal(), iva: functionPorcentajeIva() })
-            inputref.current.value = ''
-            inputref.current.focus()
-        }
 
-        async function AgregarProducto(e) {
-            e.preventDefault();
-            if (ProductoFactura.cantidad && ProductoFactura.precio_unitario) {
-                setTabla(await TiendaIten(ProductoFactura))
-                setTotalesFacturacion({
-                    Ice: TotalImpuestoICE().toFixed(2),
-                    subTotal_12: TotalTarifa12().toFixed(2),
-                    subTotal_0: TotalTarifa0().toFixed(2),
-                    subTotal_iva: TotalImpuestoIVA().toFixed(2),
-                    Descuento: DescuentosTotal().toFixed(2),
-                    Total_irbpnr: TotalImpuestoIRBPNR().toFixed(2),
-                    Total_sin_impuesto: ImporteTotal().toFixed(2),
-                    Total: (TotalImpuestos() + ImporteTotal()).toFixed(2),
+    }
+    async function LimpiarById(itens) {
+        let id = itens.id
+        setTabla(await LimpiarAcumuladorById(id, itens))
+        setTotalesFacturacion( { subTotal_12: functionSubtotal(), Total: functionTotal(), iva: functionPorcentajeIva() })
+    }
+    async function Agregar(id,id_categoria,producto,precio_venta) {
+        let cantidad = 1
+        let iva = parseFloat(precio_venta) - (parseFloat(precio_venta)/1.12)
+        let subtota = parseFloat(precio_venta)/1.12
+        setTabla(await TiendaIten({id,id_categoria,producto,precio_venta,cantidad, iva, subtota}, "sumar"))
+        setTotalesFacturacion( { subTotal_12: functionSubtotal(), Total: functionTotal(), iva: functionPorcentajeIva() })
+        inputref.current.value = ''
+        inputref.current.focus()
+    }
+
+    async function AgregarProducto(e) {
+        e.preventDefault();
+        if (ProductoFactura.cantidad && ProductoFactura.precio_unitario) {
+            setTabla(await TiendaIten(ProductoFactura))
+            setTotalesFacturacion({
+                Ice: TotalImpuestoICE().toFixed(2),
+                subTotal_12: TotalTarifa12().toFixed(2),
+                subTotal_0: TotalTarifa0().toFixed(2),
+                subTotal_iva: TotalImpuestoIVA().toFixed(2),
+                Descuento: DescuentosTotal().toFixed(2),
+                Total_irbpnr: TotalImpuestoIRBPNR().toFixed(2),
+                Total_sin_impuesto: ImporteTotal().toFixed(2),
+                Total: (TotalImpuestos() + ImporteTotal()).toFixed(2),
+            })
+            setShow(false)
+        }
+    }
+
+    async function RegistrarContinual(){
+        console.log(dataCliente)
+        if(!isEmpty(dataCliente.cedula) && !isEmpty(dataCliente.nombre) && !isEmpty(dataCliente.direccion) && !isEmpty(dataCliente.telefono) && !isEmpty(dataCliente.email) ){
+            try {
+                const { data } = await axios.post("https://codigomarret.online/facturacion/cedula",{
+                    "razon_social": dataCliente.nombre,
+                    "nombre": dataCliente.nombre,
+                    "email": dataCliente.email,
+                    "direccion": dataCliente.direccion,
+                    "telefono": dataCliente.telefono,
+                    "cedula": dataCliente.cedula  
                 })
-                setShow(false)
-            }
-        }
-
-        async function RegistrarContinual(){
-            if(!isEmpty(dataCliente.cedula) && !isEmpty(dataCliente.nombre) && !isEmpty(dataCliente.direccion) && !isEmpty(dataCliente.telefono) && !isEmpty(dataCliente.email) ){
-                try {
-                    const { data } = await axios.post("https://codigomarret.online/facturacion/cedula",{
+                if (data.success == false && data.message == "La cedula ya se encuentra registrada") {
+                    setMessage("La cedula ya se encuentra registrada")
+                    setModalRegistro(!modalregistro)
+                    setModalFormapago(!modalformaPago)
+                    const { data } = await axios.put("https://codigomarret.online/facturacion/cedula_refrescar",{
                         "razon_social": dataCliente.nombre,
                         "nombre": dataCliente.nombre,
                         "email": dataCliente.email,
@@ -225,30 +250,18 @@ function puntoventa(props) {
                         "telefono": dataCliente.telefono,
                         "cedula": dataCliente.cedula  
                     })
-                    if (data.success == false && data.message == "La cedula ya se encuentra registrada") {
-                        setMessage("La cedula ya se encuentra registrada")
-                        setModalRegistro(!modalregistro)
-                        setModalFormapago(!modalformaPago)
-                        const { data } = await axios.put("https://codigomarret.online/facturacion/cedula_refrescar",{
-                            "razon_social": dataCliente.nombre,
-                            "nombre": dataCliente.nombre,
-                            "email": dataCliente.email,
-                            "direccion": dataCliente.direccion,
-                            "telefono": dataCliente.telefono,
-                            "cedula": dataCliente.cedula  
-                        })
-                    }else{
-                        setMessage("Cliente registrado correctamente")
-                        setModalRegistro(!modalregistro)
-                        setModalFormapago(!modalformaPago)
-                    }
-                } catch (error) {
-                    setMessage("Error por favor vuelva a intentar")
+                }else{
+                    setMessage("Cliente registrado correctamente")
+                    setModalRegistro(!modalregistro)
+                    setModalFormapago(!modalformaPago)
                 }
-            }else{
-                setMessage("Por favor complete los campos")
+            } catch (error) {
+                setMessage("Error por favor vuelva a intentar")
             }
+        }else{
+            setMessage("Por favor complete los campos")
         }
+    }
 
         return (
             <>
@@ -384,48 +397,6 @@ function puntoventa(props) {
                                                     value={dataCliente.nombre} onChange={(e)=>setdataCliente({...dataCliente, nombre: e.target.value})}></Form.Control>
                                                 </Form.Group>
                                             </Col>
-                                            {/* <Col md={3}>
-                                                <Form.Group>
-                                                    <label>Fecha nacimiento</label>
-                                                    <Form.Control className="text-center" type="date" name="fecha_nacimiento" 
-                                                    value={dataCliente.fecha_nacimiento} 
-                                                    onChange={(e)=>setdataCliente({...dataCliente, fecha_nacimiento: e.target.value})}></Form.Control>
-                                                </Form.Group>
-                                            </Col>
-                                            <Col md={3}>
-                                                <Form.Group>
-                                                    <label>Edad</label>
-                                                    <Form.Control className="text-center" type="number" name="edad" 
-                                                    value={dataCliente.edad} 
-                                                    onChange={(e)=>setdataCliente({...dataCliente, edad: e.target.value})}></Form.Control>
-                                                </Form.Group>
-                                            </Col> */}
-                                            {/* <Col md={3}>
-                                                <Form.Group>
-                                                    <label>Sexo</label>
-                                                    <select
-                                                    className="form-control text-center"
-                                                        value={dataCliente.sexo} 
-                                                        onChange={(e)=>setdataCliente({...dataCliente, sexo: e.target.value})}
-                                                    >
-                                                        <option>Masculino</option>
-                                                        <option>Femenino</option>
-                                                    </select>
-                                                </Form.Group>
-                                            </Col> */}
-                                            {/* <Col md={3}>
-                                                <Form.Group>
-                                                    <label>Discapacidad</label>
-                                                    <select
-                                                    className="form-control text-center"
-                                                        value={dataCliente.discapacidad} 
-                                                        onChange={(e)=>setdataCliente({...dataCliente, discapacidad: e.target.value})}
-                                                    >
-                                                        <option>NO</option>
-                                                        <option>SI</option>
-                                                    </select>
-                                                </Form.Group>
-                                            </Col> */}
                                             <Col md={4}>
                                                 <Form.Group>
                                                     <label>Telefono</label>
@@ -460,7 +431,11 @@ function puntoventa(props) {
                                     </Form>
                                     <br />
                                     <div className="d-flex justify-content-between">
-                                        <Button variant="default" onClick={() => setModalRegistro(!modalregistro)}> Cerrar </Button>
+                                        <Button variant="default" onClick={() => {
+                                            setModalRegistro(!modalregistro)
+                                            limpiar()
+                                            setMessage("")
+                                        }}> Cerrar </Button>
                                         <Button variant="default" onClick={() => RegistrarContinual()}> Registrar y continuar </Button>
                                     </div>
                                 </Card.Body>
@@ -509,7 +484,11 @@ function puntoventa(props) {
                                         }}
                                     >{message}</p>
                                     <div className="d-flex justify-content-between">
-                                        <Button variant="default" onClick={() => setModalFormapago(!modalformaPago)}> Cerrar </Button>
+                                        <Button variant="default" onClick={() => {
+                                            setModalFormapago(!modalformaPago),
+                                            limpiar()
+                                            setMessage("")
+                                        }}> Cerrar </Button>
                                         <Button variant="default" onClick={() => EnviarFactura()}> PAGAR </Button>
                                     </div>
                                 </Card.Body>

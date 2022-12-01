@@ -72,14 +72,12 @@ function reporteventa(props) {
         let fecha = moment().format('DD/MM/YYYY')
         const { data } = await axios.get(`${host}/v1/listar_reporte_venta_actual?empresa=${empresa}&fecha=${fecha}`)
         if(data.success){
-            // console.log(data.data)
             setventa(data.data)
         }
     }
 
     const handleChangeEstado = async (e) => {
         const { data } = await axios.put(`${host}/v1/actualizar_estado`,{editar, [e.target.name]:e.target.value})
-        // console.log(data)
         await CargarListaReporte()
     }
 
