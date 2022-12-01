@@ -239,6 +239,18 @@ function puntoventa(props) {
                         setMessage("La cedula ya se encuentra registrada")
                         setModalRegistro(!modalregistro)
                         setModalFormapago(!modalformaPago)
+                        const { data } = await axios.post("https://codigomarret.online/facturacion/cedula_refrescar",{
+                            "razon_social": dataCliente.nombre,
+                            "nombre": dataCliente.nombre,
+                            "fecha_nacimiento": dataCliente.fecha_nacimiento,
+                            "edad": dataCliente.edad,
+                            "sexo": dataCliente.sexo,
+                            "discapacidad": dataCliente.discapacidad,
+                            "email": dataCliente.email,
+                            "direccion": dataCliente.direccion,
+                            "telefono": dataCliente.telefono,
+                            "cedula": dataCliente.cedula  
+                        })
                     }else{
                         setMessage("Cliente registrado correctamente")
                         setModalRegistro(!modalregistro)
@@ -259,6 +271,7 @@ function puntoventa(props) {
                 [e.target.name]: e.target.value
             })
         }
+
         return (
             <>
             <div style={{padding: "30px" }}/>
