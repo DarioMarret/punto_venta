@@ -75,9 +75,13 @@ function Sidebar(props) {
   };
   const { routes, logo } = props;
   let navbarBrand = (
-    <NavbarBrand href="#pablo" className="pt-0">
-      <img alt={logo.imgAlt} className="navbar-brand-img" src={logo.imgSrc} />
-    </NavbarBrand>
+    // <NavbarBrand href="#pablo" className="pt-0">
+      <img alt="logo" className="" style={{
+        width: "100%",
+        height: "100%"
+
+      }} src="https://codigomarret.online/store/img/luvnoven.png" />
+    // </NavbarBrand>
   );
   return (
     <Navbar

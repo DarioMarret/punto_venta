@@ -56,10 +56,14 @@
     "react-next-table": "^1.1.4",
     "reactstrap": "8.9.0",
     "sweetalert2": "^11.4.8",
-    "webpack": "4.44.1"
+    "webpack": "^4.44.1"
   },
   "peerDependencies": {
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
+  },
+  "devDependencies": {
+    "sass": "^1.56.1",
+    "sass-loader": "^10.4.1"
   }
 }

@@ -3,12 +3,17 @@ import { Button, Card, Col, Container, Row, Table, Form, Modal as ModalSpinner }
 import { Modal, Spin } from 'antd'
 import Admin from "layouts/Admin.js";
 import "assets/css/PuntoVenta.css";
-import { DOCUMENTO, host } from "../../../function/util/global";
+import { DOCUMENTO, host, FORMAPAGO } from "../../../function/util/global";
 import moment from "moment";
 import axios from "axios";
-import { functionPorcentaje, functionTotal, getDatosUsuario, getVerTienda, LimpiarAcumuladorById, LimpiarStoreDespuesDenviar, TiendaIten } from "../../../function/localstore/storeUsuario";
+import { functionPorcentajeIva, functionSubtotal, functionTotal, functionTotalIva, getDatosUsuario, getVerTienda, LimpiarAcumuladorById, LimpiarStoreDespuesDenviar, TiendaIten } from "../../../function/localstore/storeUsuario";
+import { datosEmpresa, JsonStructura } from "../../../function/localstore/jsonStructura";
+import isEmpty from "is-empty";
+
+
 
 function puntoventa(props) {
+
 
     const [estable, setestable] = useState(null)
     var empresaDatos = [];
@@ -24,12 +29,27 @@ function puntoventa(props) {
     const [mensage, setmensage] = useState(null)
     const [cargando, setcargando] = useState(false);
 
+    const [modalregistro, setModalRegistro] = useState(false)
+    const [modalformaPago, setModalFormapago] = useState(false)
+
     const [Formato, setFormato] = useState(null)
     const inputrefLimpiar = useRef(null);
     const [tikect, settikect] = useState(false)
     const [formaPago, setformaPago] = useState([]);
     const [resultadoSearch, setresultadoSearch] = useState([]);
-    const [dataCliente, setdataCliente] = useState("getDatosCliente()");
+    const [dataCliente, setdataCliente] = useState({
+        nombre: "",
+        razon_social: "",
+        fecha_nacimiento: "",
+        edad: "",
+        sexo:"",
+        discapacidad: "NO",
+        email: "",
+        direccion:"",
+        telefono:"",
+        cedula:"" 
+    })
+    const [message, setMessage] = useState('')
     const [ProductoFactura, setProductoFactura] = useState({
         id: null,
         codigo: null,
@@ -49,29 +69,35 @@ function puntoventa(props) {
     })
 
     const [TotalesFacturacion, setTotalesFacturacion] = useState({
-        subTotal_12: null,
+        subTotal_12: functionSubtotal(),
+        iva: functionPorcentajeIva(),
         Total: functionTotal(),
     })
 
     async function EnviarFactura() {
        
         let tienda = getVerTienda()
-        let empresa = getDatosUsuario().data.empresa
+        // let empresa = getDatosUsuario().data.empresa
+        let empresa = await datosEmpresa()
+        // let secuencial = numero_secuencial
         setcargando(true)
-        let secuencial = NumeroAleatorio()
         let fecha = moment().format("DD/MM/YYYY");
         console.log(fecha)
-        await axios.post('http://localhost:8000/imprimir/tikect',{secuencial, tienda, empresa, fecha})
-        const { data } = await axios.post(`${host}/v1/crear_venta`,{tienda, empresa, secuencial, fecha})
-        if (data.success) {
-            LimpiarStoreDespuesDenviar()
-            setTabla([])
-            setcargando(false)
-            setTotalesFacturacion({
-                subTotal_12: null,
-                Total: functionTotal(),
-            })
-        }
+        console.log(tienda)
+        console.log(empresa)
+        const respuesta = await JsonStructura(tienda)
+        console.log(respuesta)
+        // await axios.post('http://localhost:8000/imprimir/tikect',{secuencial, tienda, empresa, fecha})
+        // const { data } = await axios.post(`${host}/v1/crear_venta`,{tienda, empresa, secuencial, fecha})
+        // if (data.success) {
+        //     LimpiarStoreDespuesDenviar()
+        //     setTabla([])
+        //     setcargando(false)
+        //     setTotalesFacturacion({
+        //         subTotal_12: null,
+        //         Total: functionTotal(),
+        //     })
+        // }
     }
 
     const NumeroAleatorio=()=>{
@@ -80,6 +106,7 @@ function puntoventa(props) {
     }
     
     useEffect(async () => {
+        await  JsonStructura()
         // setformaPago(await ListarFormasPagos())
     }, [])
     const SpinnerCargando = () => {
@@ -94,22 +121,33 @@ function puntoventa(props) {
             </ModalSpinner>
         )
     }
-        async function ValidarRuc(e) {
-            var cedula = e.target.value;
+    async function ValidarRuc(e) {
+        try {
+            var cedula = e;
+            setdataCliente({
+            ...dataCliente,
+                cedula:cedula
+            })
             if (cedula.length == 10) {
-                const response = await ObtenerCliente(cedula)
-                if (response) {
-                    setDatosCliente(response.data[0]);
-                    setdataCliente(getDatosCliente())
+                const {data , status} = await axios.get("https://codigomarret.online/facturacion/cedula/"+e)
+                console.log(data)
+                if (data.success) {
+                    setdataCliente(data.data);
+                }else{
+                    setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
                 }
             } else if (cedula.length == 13 && cedula.indexOf("001", 10)) {
-                const response = await ObtenerCliente(cedula);
-                if (response) {
-                    setDatosCliente(response.data[0]);
-                    setdataCliente(getDatosCliente())
+                const {data , status} = await axios.get("https://codigomarret.online/facturacion/cedula/"+e)
+                if (data.success) {
+                    setdataCliente(data.data);
+                }else{
+                    setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
                 }
             }
+        } catch (error) {
+            setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
         }
+    }
 
         function limpiar() {
             inputrefLimpiar.current.value = ""
@@ -176,13 +214,49 @@ function puntoventa(props) {
                 setShow(false)
             }
         }
+
+        async function RegistrarContinual(){
+            if(!isEmpty(dataCliente.cedula) && !isEmpty(dataCliente.nombre)  && 
+            !isEmpty(dataCliente.direccion) && !isEmpty(dataCliente.telefono) && 
+            !isEmpty(dataCliente.email) && !isEmpty(dataCliente.fecha_nacimiento) && 
+            !isEmpty(dataCliente.sexo) && !isEmpty(dataCliente.discapacidad) && 
+            !isEmpty(dataCliente.edad) ){
+                try {
+                    const { data } = await axios.post("https://codigomarret.online/facturacion/cedula",{
+                        "razon_social": dataCliente.nombre,
+                        "nombre": dataCliente.nombre,
+                        "fecha_nacimiento": dataCliente.fecha_nacimiento,
+                        "edad": dataCliente.edad,
+                        "sexo": dataCliente.sexo,
+                        "discapacidad": dataCliente.discapacidad,
+                        "email": dataCliente.email,
+                        "direccion": dataCliente.direccion,
+                        "telefono": dataCliente.telefono,
+                        "cedula": dataCliente.cedula  
+                    })
+                    if (data.success == false && data.message == "La cedula ya se encuentra registrada") {
+                        setMessage("La cedula ya se encuentra registrada")
+                        setModalRegistro(!modalregistro)
+                        setModalFormapago(!modalformaPago)
+                    }else{
+                        setMessage("Cliente registrado correctamente")
+                        setModalRegistro(!modalregistro)
+                        setModalFormapago(!modalformaPago)
+                    }
+                } catch (error) {
+                    setMessage("Error por favor vuelva a intentar")
+                }
+
+            }
+        }
+
         return (
             <>
             <div style={{padding: "30px" }}/>
                 <Container fluid>
                     <SpinnerCargando visible={cargando} />
                     <Row>
-                        <Col lg={8}>
+                        <Col lg={12}>
                             <div className="content-info-cliente">
                                 <div className="search">
                                     <i className="bi-search"></i>
@@ -214,56 +288,7 @@ function puntoventa(props) {
                                 </div>
                             </div>
                         </Col>
-                        <Col lg={4}>
-                            <div className="content-info-cliente">
-                                <Col md={12} className="" style={{ background: 'rgba(163, 158, 158)', height: '50px', display: 'table', borderRadius: '2px' }}>
-                                    <p style={{ display: 'table-cell', verticalAlign: 'middle', fontFamily: 'bold' }}> Datos Del Cliente </p>
-                                </Col>
-                                <div className="content-body-cliente">
-                                    <Col lg={6}>
-                                        <select name="documento" id="documento" className="form-control">
-                                            {
-                                                DOCUMENTO.map((iten, index) => (
-                                                    <option key={index} value={iten.codigo}>{iten.forma}</option>
-                                                ))
-                                            }
-                                        </select>
-                                    </Col>
-                                    <Col lg={5}>
-                                        <select name="forma_pago" id="forma_pago" className="form-control" onChange={(e) => getLocalStoraFormaPaga(e.target.value)} >
-                                            <option value={null}>Forma de pago</option>
-                                            {/* {
-                                                formaPago ? 
-                                                formaPago.map( (iten, index)=>(
-                                                <option key={index} value={iten.codigo}>{iten.forma_pago}</option>
-                                                )): ''
-                                            } */}
-                                        </select>
-                                    </Col>
-                                    <Col lg={6}> <input type="text" className="form-control" value={"getDatosUsuario().empresa"} disabled /></Col>
-                                    <Col lg={2}><input type="text" className="form-control text-center" value={"estable"} disabled /> </Col>
-                                    {/* <Col lg={3}><input type="text" className="form-control text-center" disabled value={Fecha()}/></Col> */}
-                                    <Col lg={7}><input type="text" ref={inputrefLimpiar} className="form-control" placeholder="Buscar cliente por ruc o cedula" onChange={(e) => ValidarRuc(e)} /> </Col>
-                                    <Col lg={4}><input type="button" className="form-control" value="Limpiar" onClick={() => limpiar()} /></Col>
-                                    <Col lg={11}>
-                                        {
-                                            dataCliente != null ? <input type="text" className="form-control text-center" value={dataCliente.cedula} disabled />
-                                                : <input type="text" className="form-control text-center" value="" disabled />
-                                        }
-                                    </Col>
-                                    {/* <Col lg={4}>  <input type="button" className="form-control" value="Crear" /> </Col> */}
-                                    <Col lg={10}>
-                                        <input type="text" className="form-control"
-                                            value={
-                                                dataCliente != null ? dataCliente.apellidos + " " + dataCliente.nombres : "SIN RAZON COMERCIAL"
-                                            }
-                                            disabled
-                                        />
-                                    </Col>
-                                    <Col lg={1}> <input type="button" className="form-control btn-default" /></Col>
-                                </div>
-                            </div>
-                        </Col>
+
                         <Col lg={12}>
                             <Card>
                                 <Card.Body>
@@ -311,63 +336,175 @@ function puntoventa(props) {
                                                 <td> </td>
                                                 <td> </td>
                                                 <td> </td>
-                                                <td> <b>{"0.0"}</b> </td>
-                                                <td> <b>{"0.0"}</b> </td>
+                                                <td> <b>{TotalesFacturacion.subTotal_12}</b> </td>
+                                                <td> <b>{TotalesFacturacion.iva}</b> </td>
                                                 <td> <b>{TotalesFacturacion.Total}</b> </td>
                                             </tr>
                                         </tbody>
                                     </Table>
                                     <div className="d-flex justify-content-end">
-                                        {/* <Button className="" variant="default" onClick={() => console.log("hola")}>Guardar Firmar y Enviar</Button> */}
-                                        <Button className="" variant="default" onClick={() => EnviarFactura()}>Guardar</Button>
-                                        {/* <Button className="" variant="default" onClick={()=>ModalTikect("no")}>Imprimir y Guardar</Button> */}
-
+                                        {/* <Button className="" variant="default" onClick={() => EnviarFactura()}>Guardar</Button> */}
+                                        <Button className="" variant="default" onClick={() => setModalRegistro(!modalregistro)}>PAGAR</Button>
                                     </div>
                                 </Card.Body>
                             </Card>
                         </Col>
                     </Row>
-                    {/* <ModalRemover show={show}>
+                    <ModalSpinner 
+                        show={modalregistro}
+                        onHide={() => setShow(!show)}
+                        title="Pagar"
+                        size="lg"
+                    >
                         <Row>
                             <Card>
                                 <Card.Body>
                                     <Form action="#" method="#">
+                                        <Col>
+                                            <h2>Ingrese Datos de Cliente</h2>
+                                        </Col>
                                         <Row className="d-flex justify-content-between">
-                                            <Col md={6}>
+                                            <Col md={4}>
                                                 <Form.Group>
-                                                    <label>Codigo</label>
-                                                    <Form.Control disabled type="text" name="codigoPrincipal" value={"ProductoFactura.codigoPrincipal"}></Form.Control>
+                                                    <label>Cedula / Ruc</label>
+                                                    <Form.Control type="text" name="cedula" value={dataCliente.cedula}
+                                                     onChange={(event) => ValidarRuc(event.target.value)}
+                                                    ></Form.Control>
                                                 </Form.Group>
                                             </Col>
-                                            <Col md={6}>
+                                            <Col md={8}>
                                                 <Form.Group>
-                                                    <label>Producto Materia</label>
-                                                    <Form.Control placeholder="Materia Prima" name="descripcion" type="text" disabled value={"ProductoFactura.descripcion"}></Form.Control>
+                                                    <label>Nombre Completo</label>
+                                                    <Form.Control placeholder="" type="text" name="nombre" 
+                                                    value={dataCliente.nombre} onChange={(e)=>setDataCliente({...dataCliente, nombre: e.target.value})}></Form.Control>
                                                 </Form.Group>
                                             </Col>
-                                            <Col md={6}>
+                                            <Col md={3}>
                                                 <Form.Group>
-                                                    <label>Cantidad</label>
-                                                    <Form.Control placeholder="Cantidad Inicial" type="number" name="cantidad" onChange={() => console.log("hola")}></Form.Control>
+                                                    <label>Fecha nacimiento</label>
+                                                    <Form.Control className="text-center" type="date" name="fecha_nacimiento" 
+                                                    value={dataCliente.fecha_nacimiento} 
+                                                    onChange={(e)=>setDataCliente({...dataCliente, fecha_nacimiento: e.target.value})}></Form.Control>
                                                 </Form.Group>
                                             </Col>
-                                            <Col md={6}>
+                                            <Col md={3}>
                                                 <Form.Group>
-                                                    <label>Precio Unitario</label>
-                                                    <Form.Control className="text-center" type="text" name="precio_unitario" onChange={() => console.log("hola")} ></Form.Control>
+                                                    <label>Edad</label>
+                                                    <Form.Control className="text-center" type="number" name="edad" 
+                                                    value={dataCliente.edad} 
+                                                    onChange={(e)=>setDataCliente({...dataCliente, edad: e.target.value})}></Form.Control>
+                                                </Form.Group>
+                                            </Col>
+                                            <Col md={3}>
+                                                <Form.Group>
+                                                    <label>Sexo</label>
+                                                    <select
+                                                    className="form-control text-center"
+                                                        value={dataCliente.sexo} 
+                                                        onChange={(e)=>setDataCliente({...dataCliente, sexo: e.target.value})}
+                                                    >
+                                                        <option>Masculino</option>
+                                                        <option>Femenino</option>
+                                                    </select>
+                                                </Form.Group>
+                                            </Col>
+                                            <Col md={3}>
+                                                <Form.Group>
+                                                    <label>Discapacidad</label>
+                                                    <select
+                                                    className="form-control text-center"
+                                                        value={dataCliente.discapacidad} 
+                                                        onChange={(e)=>setDataCliente({...dataCliente, discapacidad: e.target.value})}
+                                                    >
+                                                        <option>NO</option>
+                                                        <option>SI</option>
+                                                    </select>
+                                                </Form.Group>
+                                            </Col>
+                                            <Col md={4}>
+                                                <Form.Group>
+                                                    <label>Telefono</label>
+                                                    <Form.Control className="text-center" type="text" name="telefono" 
+                                                    value={dataCliente.telefono} 
+                                                    onChange={(e)=>setDataCliente({...dataCliente, telefono: e.target.value})}></Form.Control>
+                                                </Form.Group>
+                                            </Col>
+                                            <Col md={8}>
+                                                <Form.Group>
+                                                    <label>Email</label>
+                                                    <Form.Control className="text-center" type="text" name="email" 
+                                                    value={dataCliente.email} 
+                                                    onChange={(e)=>setDataCliente({...dataCliente, email: e.target.value})}></Form.Control>
+                                                </Form.Group>
+                                            </Col>
+                                            <Col md={12}>
+                                                <Form.Group>
+                                                    <label>Direccion</label>
+                                                    <Form.Control className="text-center" type="text" name="direccion" 
+                                                    value={dataCliente.direccion} 
+                                                    onChange={(e)=>setDataCliente({...dataCliente, direccion: e.target.value})}></Form.Control>
+                                                    <p
+                                                        style={{
+                                                            color:"red",
+                                                            fontSize:17
+                                                        }}
+                                                    >{message}</p>
                                                 </Form.Group>
                                             </Col>
                                         </Row>
                                     </Form>
                                     <br />
                                     <div className="d-flex justify-content-between">
-                                        <Button variant="default" onClick={() => console.log("hola")}> Cerrar </Button>
-                                        <Button variant="default" onClick={() => console.log("hola")}> Registrar Producto </Button>
+                                        <Button variant="default" onClick={() => setModalRegistro(!modalregistro)}> Cerrar </Button>
+                                        <Button variant="default" onClick={() => RegistrarContinual()}> Registrar y continuar </Button>
                                     </div>
                                 </Card.Body>
                             </Card>
                         </Row>
-                    </ModalRemover> */}
+                    </ModalSpinner>
+                    <ModalSpinner 
+                        show={modalformaPago}
+                        onHide={() => setModalFormapago(!modalformaPago)}
+                        title="Pagar"
+                        size="lg"
+                    >
+                        <Row>
+                            <Card
+                                style={{
+                                    width: "100%"
+                                }}
+                            >
+                                <Card.Body>
+                                    <Form action="#" method="#">
+                                    <Col md={12}>
+                                            <h2>Forma de Pago</h2>
+                                        </Col>
+                                        <Row className="d-flex justify-content-between">
+                                            <Col md={12}>
+                                                <Form.Group>
+                                                    <select
+                                                    className="form-control text-center"
+                                                    >
+                                                        <option>Selecione una forma de pago</option>
+                                                        {
+                                                            FORMAPAGO.map((item, index) => (
+                                                                <option key={index}>{item.E}</option>
+                                                            ))
+                                                        }
+                                                    </select>
+                                                </Form.Group>
+                                            </Col>
+                                        </Row>
+                                    </Form>
+                                    <br />
+                                    <div className="d-flex justify-content-between">
+                                        <Button variant="default" onClick={() => setModalFormapago(!modalformaPago)}> Cerrar </Button>
+                                        <Button variant="default" onClick={() => EnviarFactura()}> PAGAR </Button>
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Row>
+                    </ModalSpinner>
                 </Container>
             </>
         );

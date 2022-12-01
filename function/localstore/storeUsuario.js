@@ -107,14 +107,51 @@ export function functionTotal(){
             iva.map(iten => {
                 total += parseFloat(iten.precio_venta) * iten.cantidad
             })
-            return total.toFixed(2)
+            return "$"+total.toFixed(2)
         }else{
             return 0
         }
-     } catch (error) {
-        console.log(error)
-     }
+    } catch (error) {
+    console.log(error)
+    }
 }
+export function functionSubtotal(){
+    try {
+        let iten = localStorage.getItem('tienda:')
+        if(iten !== null){
+            let iva = JSON.parse(iten);
+            let total = 0;
+            iva.map(iten => {
+                total += parseFloat(iten.precio_venta) * iten.cantidad
+            })
+            return "$"+(total / 1.12).toFixed(2)
+        }else{
+            return 0
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export function functionPorcentajeIva(){
+    try {
+        let iten = localStorage.getItem('tienda:')
+        if(iten !== null){
+            let iva = JSON.parse(iten);
+            let total = 0;
+            iva.map(iten => {
+                total += parseFloat(iten.precio_venta) * iten.cantidad
+            })
+            return "$"+(total - total / 1.12).toFixed(2)
+        }else{
+            return 0
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
 export function getVerTienda() {
     try {
         let iten = JSON.parse(window.localStorage.getItem('tienda:'));
