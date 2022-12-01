@@ -77,38 +77,28 @@ function puntoventa(props) {
     async function EnviarFactura() {
        
         let tienda = getVerTienda()
-        // let empresa = getDatosUsuario().data.empresa
-        let empresa = await datosEmpresa()
-        // let secuencial = numero_secuencial
+        let empresa = getDatosUsuario().data.empresa
+        let {numero_secuencial} = await datosEmpresa()
+        let secuencial = numero_secuencial
         setcargando(true)
         let fecha = moment().format("DD/MM/YYYY");
-        console.log(fecha)
-        console.log(tienda)
-        console.log(empresa)
-        const respuesta = await JsonStructura(tienda)
-        console.log(respuesta)
+        await JsonStructura(tienda, TotalesFacturacion, dataCliente)
         // await axios.post('http://localhost:8000/imprimir/tikect',{secuencial, tienda, empresa, fecha})
-        // const { data } = await axios.post(`${host}/v1/crear_venta`,{tienda, empresa, secuencial, fecha})
-        // if (data.success) {
-        //     LimpiarStoreDespuesDenviar()
-        //     setTabla([])
-        //     setcargando(false)
-        //     setTotalesFacturacion({
-        //         subTotal_12: null,
-        //         Total: functionTotal(),
-        //     })
-        // }
-    }
-
-    const NumeroAleatorio=()=>{
-        const r = Math.random()*(10000000-99999999) + 99999999
-        return Math.floor(r)
+        const { data } = await axios.post(`${host}/v1/crear_venta`,{tienda, empresa, secuencial, fecha})
+        if (data.success) {
+            LimpiarStoreDespuesDenviar()
+            setTabla([])
+            setcargando(false)
+            setTotalesFacturacion({
+                subTotal_12: functionSubtotal(),
+                Total: functionTotal(),
+                iva: functionPorcentajeIva(),
+            })
+            setModalFormapago(false)
+            limpiar()
+        }
     }
     
-    useEffect(async () => {
-        await  JsonStructura()
-        // setformaPago(await ListarFormasPagos())
-    }, [])
     const SpinnerCargando = () => {
         return (
             <ModalSpinner show={cargando} size="sm" onClick={() => setcargando(false)}>
@@ -149,11 +139,20 @@ function puntoventa(props) {
         }
     }
 
-        function limpiar() {
-            inputrefLimpiar.current.value = ""
-            setDatosCliente(null);
-            setdataCliente(null)
-        }
+    function limpiar() {
+        setdataCliente({
+            nombre: "",
+            razon_social: "",
+            fecha_nacimiento: "",
+            edad: "",
+            sexo:"",
+            discapacidad: "NO",
+            email: "",
+            direccion:"",
+            telefono:"",
+            cedula:"" 
+        })
+    }
 
         async function BuscadorHandle(event) {
             var busqueda = event.target.value;
@@ -172,19 +171,21 @@ function puntoventa(props) {
             } else {
                 itens["cantidad"] = 1
                 setTabla(await TiendaIten(itens, options))
-                setTotalesFacturacion( { subTotal_12: functionPorcentaje(), Total: functionTotal() })
+                setTotalesFacturacion( { subTotal_12: functionSubtotal(), Total: functionTotal(), iva: functionPorcentajeIva() })
             }
 
         }
         async function LimpiarById(itens) {
             let id = itens.id
             setTabla(await LimpiarAcumuladorById(id, itens))
-            setTotalesFacturacion( { subTotal_12: functionPorcentaje(), Total: functionTotal() })
+            setTotalesFacturacion( { subTotal_12: functionSubtotal(), Total: functionTotal(), iva: functionPorcentajeIva() })
         }
         async function Agregar(id,id_categoria,producto,precio_venta) {
             let cantidad = 1
-            setTabla(await TiendaIten({id,id_categoria,producto,precio_venta,cantidad}, "sumar"))
-            setTotalesFacturacion( { subTotal_12: functionPorcentaje(), Total: functionTotal() })
+            let iva = parseFloat(precio_venta) - (parseFloat(precio_venta)/1.12)
+            let subtota = parseFloat(precio_venta)/1.12
+            setTabla(await TiendaIten({id,id_categoria,producto,precio_venta,cantidad, iva, subtota}, "sumar"))
+            setTotalesFacturacion( { subTotal_12: functionSubtotal(), Total: functionTotal(), iva: functionPorcentajeIva() })
             inputref.current.value = ''
             inputref.current.focus()
         }
@@ -336,9 +337,9 @@ function puntoventa(props) {
                                                 <td> </td>
                                                 <td> </td>
                                                 <td> </td>
-                                                <td> <b>{TotalesFacturacion.subTotal_12}</b> </td>
-                                                <td> <b>{TotalesFacturacion.iva}</b> </td>
-                                                <td> <b>{TotalesFacturacion.Total}</b> </td>
+                                                <td> <b>${TotalesFacturacion.subTotal_12}</b> </td>
+                                                <td> <b>${TotalesFacturacion.iva}</b> </td>
+                                                <td> <b>${TotalesFacturacion.Total}</b> </td>
                                             </tr>
                                         </tbody>
                                     </Table>
