@@ -127,14 +127,15 @@ function puntoventa(props) {
                 }else{
                     setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
                 }
-            } else if (cedula.length == 13 && cedula.indexOf("001", 10)) {
-                const {data , status} = await axios.get("https://codigomarret.online/facturacion/cedula/"+e)
-                if (data.success) {
-                    setdataCliente(data.data);
-                }else{
-                    setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
-                }
-            }
+            } 
+            // else if (cedula.length == 13 && cedula.indexOf("001", 10)) {
+            //     const {data , status} = await axios.get("https://codigomarret.online/facturacion/cedula/"+e)
+            //     if (data.success) {
+            //         setdataCliente(data.data);
+            //     }else{
+            //         setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
+            //     }
+            // }
         } catch (error) {
             setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
         }
@@ -189,14 +190,6 @@ function puntoventa(props) {
             setTotalesFacturacion( { subTotal_12: functionSubtotal(), Total: functionTotal(), iva: functionPorcentajeIva() })
             inputref.current.value = ''
             inputref.current.focus()
-        }
-
-
-        const handleTextImput = (e) => {
-            setProductoFactura({
-                ...ProductoFactura,
-                [e.target.name]: parseFloat(e.target.value)
-            })
         }
 
         async function AgregarProducto(e) {
@@ -260,13 +253,6 @@ function puntoventa(props) {
             // }else{
             //     setMessage("Por favor complete los campos")
             // }
-        }
-
-        function handleTextImputCliente(e){
-            setdataCliente({
-                ...dataCliente,
-                [e.target.name]: e.target.value
-            })
         }
 
         return (
