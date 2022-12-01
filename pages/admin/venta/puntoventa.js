@@ -111,6 +111,7 @@ function puntoventa(props) {
             </ModalSpinner>
         )
     }
+
     async function ValidarRuc(e) {
         try {
             var cedula = e;
@@ -217,7 +218,7 @@ function puntoventa(props) {
         }
 
         async function RegistrarContinual(){
-            if(!isEmpty(dataCliente.cedula) && !isEmpty(dataCliente.nombre) && !isEmpty(dataCliente.direccion) && !isEmpty(dataCliente.telefono) && !isEmpty(dataCliente.email) ){
+            // if(!isEmpty(dataCliente.cedula) && !isEmpty(dataCliente.nombre) && !isEmpty(dataCliente.direccion) && !isEmpty(dataCliente.telefono) && !isEmpty(dataCliente.email) ){
                 try {
                     const { data } = await axios.post("https://codigomarret.online/facturacion/cedula",{
                         "razon_social": dataCliente.nombre,
@@ -256,9 +257,9 @@ function puntoventa(props) {
                     setMessage("Error por favor vuelva a intentar")
                 }
 
-            }else{
-                setMessage("Por favor complete los campos")
-            }
+            // }else{
+            //     setMessage("Por favor complete los campos")
+            // }
         }
 
         function handleTextImputCliente(e){
