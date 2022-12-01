@@ -253,6 +253,12 @@ function puntoventa(props) {
             }
         }
 
+        function handleTextImputCliente(e){
+            setdataCliente({
+                ...dataCliente,
+                [e.target.name]: e.target.value
+            })
+        }
         return (
             <>
             <div style={{padding: "30px" }}/>
@@ -370,19 +376,21 @@ function puntoventa(props) {
                                             <Col md={4}>
                                                 <Form.Group>
                                                     <label>Cedula / Ruc</label>
-                                                    <Form.Control type="text" name="cedula" value={dataCliente.cedula}
-                                                     onChange={(event) =>{
-                                                        ValidarRuc(event.target.value),
-                                                        setMessage('')
-                                                     }}
-                                                    ></Form.Control>
+                                                    <input type="text" name="cedula"
+                                                    placeholder="Ruc"
+                                                     className="form-control" 
+                                                     value={dataCliente.cedula}
+                                                     onChange={(event) => {
+                                                         ValidarRuc(event.target.value),
+                                                         setMessage('')
+                                                     }} />
                                                 </Form.Group>
                                             </Col>
                                             <Col md={8}>
                                                 <Form.Group>
                                                     <label>Nombre Completo</label>
                                                     <Form.Control placeholder="" type="text" name="nombre" 
-                                                    value={dataCliente.nombre} onChange={(e)=>setDataCliente({...dataCliente, nombre: e.target.value})}></Form.Control>
+                                                    value={dataCliente.nombre} onChange={(e)=>setdataCliente({...dataCliente, nombre: e.target.value})}></Form.Control>
                                                 </Form.Group>
                                             </Col>
                                             <Col md={3}>
@@ -390,7 +398,7 @@ function puntoventa(props) {
                                                     <label>Fecha nacimiento</label>
                                                     <Form.Control className="text-center" type="date" name="fecha_nacimiento" 
                                                     value={dataCliente.fecha_nacimiento} 
-                                                    onChange={(e)=>setDataCliente({...dataCliente, fecha_nacimiento: e.target.value})}></Form.Control>
+                                                    onChange={(e)=>setdataCliente({...dataCliente, fecha_nacimiento: e.target.value})}></Form.Control>
                                                 </Form.Group>
                                             </Col>
                                             <Col md={3}>
@@ -398,7 +406,7 @@ function puntoventa(props) {
                                                     <label>Edad</label>
                                                     <Form.Control className="text-center" type="number" name="edad" 
                                                     value={dataCliente.edad} 
-                                                    onChange={(e)=>setDataCliente({...dataCliente, edad: e.target.value})}></Form.Control>
+                                                    onChange={(e)=>setdataCliente({...dataCliente, edad: e.target.value})}></Form.Control>
                                                 </Form.Group>
                                             </Col>
                                             <Col md={3}>
@@ -407,7 +415,7 @@ function puntoventa(props) {
                                                     <select
                                                     className="form-control text-center"
                                                         value={dataCliente.sexo} 
-                                                        onChange={(e)=>setDataCliente({...dataCliente, sexo: e.target.value})}
+                                                        onChange={(e)=>setdataCliente({...dataCliente, sexo: e.target.value})}
                                                     >
                                                         <option>Masculino</option>
                                                         <option>Femenino</option>
@@ -420,7 +428,7 @@ function puntoventa(props) {
                                                     <select
                                                     className="form-control text-center"
                                                         value={dataCliente.discapacidad} 
-                                                        onChange={(e)=>setDataCliente({...dataCliente, discapacidad: e.target.value})}
+                                                        onChange={(e)=>setdataCliente({...dataCliente, discapacidad: e.target.value})}
                                                     >
                                                         <option>NO</option>
                                                         <option>SI</option>
@@ -432,7 +440,7 @@ function puntoventa(props) {
                                                     <label>Telefono</label>
                                                     <Form.Control className="text-center" type="text" name="telefono" 
                                                     value={dataCliente.telefono} 
-                                                    onChange={(e)=>setDataCliente({...dataCliente, telefono: e.target.value})}></Form.Control>
+                                                    onChange={(e)=>setdataCliente({...dataCliente, telefono: e.target.value})}></Form.Control>
                                                 </Form.Group>
                                             </Col>
                                             <Col md={8}>
@@ -440,7 +448,7 @@ function puntoventa(props) {
                                                     <label>Email</label>
                                                     <Form.Control className="text-center" type="text" name="email" 
                                                     value={dataCliente.email} 
-                                                    onChange={(e)=>setDataCliente({...dataCliente, email: e.target.value})}></Form.Control>
+                                                    onChange={(e)=>setdataCliente({...dataCliente, email: e.target.value})}></Form.Control>
                                                 </Form.Group>
                                             </Col>
                                             <Col md={12}>
@@ -448,7 +456,7 @@ function puntoventa(props) {
                                                     <label>Direccion</label>
                                                     <Form.Control className="text-center" type="text" name="direccion" 
                                                     value={dataCliente.direccion} 
-                                                    onChange={(e)=>setDataCliente({...dataCliente, direccion: e.target.value})}></Form.Control>
+                                                    onChange={(e)=>setdataCliente({...dataCliente, direccion: e.target.value})}></Form.Control>
                                                     <p
                                                         style={{
                                                             color:"red",
