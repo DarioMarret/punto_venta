@@ -83,7 +83,7 @@ function puntoventa(props) {
         setcargando(true)
         let fecha = moment().format("DD/MM/YYYY");
         await JsonStructura(tienda, TotalesFacturacion, dataCliente)
-        // await axios.post('http://localhost:8000/imprimir/tikect',{secuencial, tienda, empresa, fecha})
+        await axios.post('http://localhost:8000/imprimir/tikect',{secuencial, tienda, empresa, fecha})
         const { data } = await axios.post(`${host}/v1/crear_venta`,{tienda, empresa, secuencial, fecha})
         if (data.success) {
             LimpiarStoreDespuesDenviar()
