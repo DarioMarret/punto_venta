@@ -127,15 +127,14 @@ function puntoventa(props) {
                 }else{
                     setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
                 }
-            } 
-            // else if (cedula.length == 13 && cedula.indexOf("001", 10)) {
-            //     const {data , status} = await axios.get("https://codigomarret.online/facturacion/cedula/"+e)
-            //     if (data.success) {
-            //         setdataCliente(data.data);
-            //     }else{
-            //         setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
-            //     }
-            // }
+            } else if (cedula.length == 13 && cedula.indexOf("001", 10)) {
+                const {data , status} = await axios.get("https://codigomarret.online/facturacion/cedula/"+e)
+                if (data.success) {
+                    setdataCliente(data.data);
+                }else{
+                    setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
+                }
+            }
         } catch (error) {
             setMessage("Numero de cedula no se encuentra en la nuestra base de datos por favor registrar")
         }
