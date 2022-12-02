@@ -74,7 +74,7 @@ function puntoventa(props) {
        
         let tienda = getVerTienda()
         console.log(tienda)
-        if(typeof tienda == 'object' ){
+        if(typeof tienda == 'object' && tienda.length > 0){
             let empresa = getDatosUsuario().data.empresa
             let {numero_secuencial} = await datosEmpresa()
             let secuencial = numero_secuencial

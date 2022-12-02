@@ -75,7 +75,7 @@ export const JsonStructura = async (tienda, TotalesFacturacion, dataCliente) => 
                     {
                         "codigo": "2",
                         "codigoPorcentaje": "2",
-                        "baseImponible": "12.00",
+                        "baseImponible": TotalesFacturacion.subTotal_12,
                         "valor": TotalesFacturacion.iva
                     }
                 ]
